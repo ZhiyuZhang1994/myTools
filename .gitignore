@@ -1,0 +1,18 @@
+# 构建文件夹
+build
+
+# 输出目录
+bin
+
+# 各类日志文件
+*.log
+
+# idea临时文件(夹)
+.idea
+cmake-build-debug
+
+# 工具文件夹
+.vscode
+
+# QT生成的临时文件
+CMakeLists.txt.user
