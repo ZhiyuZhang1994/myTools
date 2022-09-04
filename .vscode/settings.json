@@ -1,0 +1,87 @@
+{
+    // 1、自动保存设置
+    "files.autoSave": "onFocusChange",
+    // 2、每行字符长度120
+    "editor.rulers": [
+    120
+    ],
+    // 3、鼠标缩放
+    "editor.mouseWheelZoom": true,
+    // 4、显示bash输出窗
+    "terminal.integrated.profiles.windows": {
+        "bash": {
+          // 自己的安装路径, 是bin下的bash.exe
+          "path": "D:\\Programs\\Git\\bin\\bash.exe",
+            // 使自定义命令的别名生效
+            "args": []
+        }
+      },
+    "terminal.integrated.defaultProfile.windows": "bash",
+    // 5、设置高亮文本显示
+    "highlightwords.colors": [
+      { "light": "#b3d9ff", "dark": "cyan" },
+      { "light": "#e6ffb3", "dark": "pink" },
+      { "light": "#b3b3ff", "dark": "lightgreen" },
+      { "light": "#ffd9b3", "dark": "magenta" },
+      { "light": "#ffb3ff", "dark": "cornflowerblue" },
+      { "light": "#b3ffb3", "dark": "orange" },
+      { "light": "#ffff80", "dark": "green" },
+      { "light": "#d1e0e0", "dark": "red" }
+    ],
+    "highlightwords.box": {
+        "light": false,
+        "dark": true
+    },
+    "highlightwords.defaultMode": {
+        "default": 0
+    },
+    "highlightwords.showSidebar": {
+      "default": true
+  },
+  "files.associations": {
+    "array": "cpp",
+    "atomic": "cpp",
+    "*.tcc": "cpp",
+    "cctype": "cpp",
+    "clocale": "cpp",
+    "cmath": "cpp",
+    "cstdarg": "cpp",
+    "cstddef": "cpp",
+    "cstdint": "cpp",
+    "cstdio": "cpp",
+    "cstdlib": "cpp",
+    "cwchar": "cpp",
+    "cwctype": "cpp",
+    "deque": "cpp",
+    "unordered_map": "cpp",
+    "vector": "cpp",
+    "exception": "cpp",
+    "algorithm": "cpp",
+    "map": "cpp",
+    "memory": "cpp",
+    "memory_resource": "cpp",
+    "optional": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "system_error": "cpp",
+    "tuple": "cpp",
+    "type_traits": "cpp",
+    "utility": "cpp",
+    "fstream": "cpp",
+    "initializer_list": "cpp",
+    "iosfwd": "cpp",
+    "iostream": "cpp",
+    "istream": "cpp",
+    "limits": "cpp",
+    "new": "cpp",
+    "ostream": "cpp",
+    "sstream": "cpp",
+    "stdexcept": "cpp",
+    "streambuf": "cpp",
+    "typeinfo": "cpp",
+    "functional": "cpp",
+    "iterator": "cpp",
+    "unordered_set": "cpp",
+    "queue": "cpp"
+  }
+}

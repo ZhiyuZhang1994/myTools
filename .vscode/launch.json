@@ -1,0 +1,28 @@
+// launch.json
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "test_code",  //  launch任务的名字：test_code
+            "preLaunchTask": "Build",  //在launch之前运行的任务名：这个名字一定要跟tasks.json中的任务名字大小写一致
+            "type": "cppdbg",  // 配置类型：只能为cppdbg
+            "request": "launch",  // 请求配置类型，可以为launch（启动）或attach（附加）
+            "program": "${workspaceFolder}/bin/test.exe",  // 任务程序的路径名称：需要运行的是当前打开文件的目录中，名字和当前文件相同，但扩展名为exe的程序
+            "args": [],  // 程序传递的参数：一般设为空即可
+            "stopAtEntry": false,  // 程序在入口是否停止：选为true则会在打开控制台后停滞，暂时不执行程序
+            "cwd": "${workspaceFolder}",  // 调试程序时的工作目录：一般为${workspaceFolder}，即代码所在目录
+            "environment": [],
+            "externalConsole": false,  // 输出窗显示形式：true显示外置的控制台窗口，false显示内置终端
+            "MIMode": "gdb",
+            //"miDebuggerPath": "D:/Programs/mingw-w64/mingw64/bin/gdb.exe",  // miDebugger的路径：和MinGW的路径对应
+            "miDebuggerPath": "gdb.exe",  // miDebugger的路径：和MinGW的路径对应
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }]
+}

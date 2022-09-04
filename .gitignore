@@ -11,8 +11,5 @@ bin
 .idea
 cmake-build-debug
 
-# 工具文件夹
-.vscode
-
 # QT生成的临时文件
 CMakeLists.txt.user
