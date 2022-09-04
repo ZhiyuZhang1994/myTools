@@ -86,7 +86,7 @@ public:
         }
         for (vtkIdType i = 0; i < ids1->GetNumberOfTuples(); i++)
         {
-        std::cout << "Id " << i << " : " << ids1->GetValue(i) << std::endl;
+            // std::cout << "Id " << i << " : " << ids1->GetValue(i) << std::endl;
         }
         std::cout << "----------------points id end" << std::endl;
     }

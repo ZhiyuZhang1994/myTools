@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(Tutorial_Step1)
 
-
 find_package(VTK COMPONENTS 
 CommonColor
 CommonCore
