@@ -42,8 +42,12 @@ set(CMAKE_CXX_STANDARD 11)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../bin/)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib) 
 
-FIND_PACKAGE(Boost 1.67 REQUIRED)
+# FIND_PACKAGE(Boost 1.67 REQUIRED)
+find_package(Boost 1.67 COMPONENTS system filesystem serialization REQUIRED)
 set(CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS}-g -std=c++11") 
+
+# include_directories(${Boost_INCLUDE_DIRS})
+
 # add_subdirectory(third_party)
 add_subdirectory(src)
 
