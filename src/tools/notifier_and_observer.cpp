@@ -1,6 +1,9 @@
-// description: 观察者机制
-// author: zhangzhiyu
-// date: 2022.4.23
+/**
+ * @brief 此工具实现了观察者机制(同进程内交互):客户不需要针对业务特性实现观察者、通知者类，是一个即拿即用的工具
+ * @brief 观察者与通知者做到完全解耦
+ * @author zhiyu.zhang@cqbdri.pku.edu.cn
+ * @date 2022-09-08
+ */
 
 #include "tools/notifier_and_observer.h"
 #include <iostream>

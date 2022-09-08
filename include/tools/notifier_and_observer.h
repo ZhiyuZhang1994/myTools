@@ -1,17 +1,18 @@
-// description: 观察者机制
-// author: zhangzhiyu
-// date: 2022.4.23
-
-// 介绍：此工具实现了观察者机制(同进程内交互)：
-// 客户不需要针对业务特性实现观察者、通知者类，是一个即拿即用的工具
-// 观察者与通知者相互解耦。
+/**
+ * @brief 此工具实现了观察者机制(同进程内交互):客户不需要针对业务特性实现观察者、通知者类，是一个即拿即用的工具
+ * @brief 观察者与通知者做到完全解耦
+ * @author zhiyu.zhang@cqbdri.pku.edu.cn
+ * @date 2022-09-08
+ */
 
 #ifndef INCLUDE_TOOLS_NOTIFIER_AND_OBSERVER
 #define INCLUDE_TOOLS_NOTIFIER_AND_OBSERVER
 
+#include <boost/serialization/string.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/iostreams/stream.hpp>
 #include <iostream>
-#include <atomic>
-#include <utility>
 #include <functional>
 #include <string>
 #include <vector>
@@ -25,6 +26,16 @@ namespace Observer_ZZY
 using Subject_t = std::uint32_t;
 using Content_t = std::string;
 using CallbackHandler = std::uint32_t;
+using InputWrapper = boost::archive::text_iarchive;
+using OutputWrapper = boost::archive::text_oarchive;
+
+#define DEFINE_MESSAGE_INPUT_WRAPPER(message) \
+    std::stringstream is(message); \
+    Observer_ZZY::InputWrapper message##In(is)
+
+#define DEFINE_MESSAGE_OUTPUT_WRAPPER(message) \
+    std::stringstream message; \
+    Observer_ZZY::OutputWrapper message##Out(message)
 
 // 主题用于发布主题对应信息
 class SubjectContent
