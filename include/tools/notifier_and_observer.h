@@ -37,7 +37,10 @@ using OutputWrapper = boost::archive::text_oarchive;
     std::stringstream message; \
     Observer_ZZY::OutputWrapper message##Out(message)
 
-// 主题用于发布主题对应信息
+/**
+ * @brief 主题：用于发布主题对应信息
+ * @brief 提供发布功能及查询观察者功能
+ */
 class SubjectContent
 {
 public:
@@ -51,13 +54,16 @@ private:
     Subject_t subject_;
 };
 
-// 通知者用于建立主题
+/**
+ * @brief 通知者：用于建立&释放&查询主题
+ */
 class Notifier
 {
 public:
     Notifier() = default;
 
     Notifier(const Notifier&) = delete;
+
     Notifier& operator=(const Notifier&) = delete;
 
     void buildSubject(Subject_t subject);
@@ -69,20 +75,27 @@ public:
 
 using ObserverCallback_t = std::function<void(Subject_t, Content_t)>;
 
-// 观察者用于观察主题
+/**
+ * @brief 观察者：用于观察&解观察主题
+ */
 class Observer
 {
 public:
     Observer() = default;
 
     CallbackHandler attach(Subject_t subject, ObserverCallback_t observerCallback);
+
     void detach(Subject_t subject, CallbackHandler handler);
 
     Observer(const Observer&) = delete;
+
     Observer& operator=(const Observer&) = delete;
 };
 
-// 中介者：用于通知者与观察者解耦，对客户不可见，保存两者数据。
+/**
+ * @brief 中介者：用于通知者与观察者解耦，对客户不可见，保存两者数据
+ */
+// 
 class ObserverContainer
 {
 public:
@@ -97,6 +110,7 @@ public:
     }
 
     CallbackHandler attach(Subject_t subject, ObserverCallback_t observerCallback);
+
     void detach(Subject_t subject, CallbackHandler handler);
 
     void buildSubject(Subject_t subject);
