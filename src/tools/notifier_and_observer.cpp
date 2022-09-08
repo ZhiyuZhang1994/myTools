@@ -2,76 +2,144 @@
 // author: zhangzhiyu
 // date: 2022.4.23
 
-#include "../../include/tools/notifier_and_observer.h"
+#include "tools/notifier_and_observer.h"
 #include <iostream>
 #include <atomic>
 #include <utility>
 #include <functional>
 #include <vector>
+#include <string>
 
-void subject_content::notify(std::vector<int> content)
+namespace Observer_ZZY
 {
-    auto observer_cbs = observer_container::get_instance()->query_observer(subject_);
-    for (auto &each : observer_cbs) {
+void SubjectContent::notify(std::string content)
+{
+    auto observerCallbacks = ObserverContainer::getInstance().queryObserver(subject_);
+    for (const auto &each : observerCallbacks) {
+        if(!each) {
+            std::cout << "nullptr" << std::endl;
+            continue;
+        }
         each(subject_, content);
     }
 }
 
-void observer::attach(subject_t subject, observer_cb_t observer_cb)
-{
-    observer_container::get_instance()->attach(subject, observer_cb);
+bool SubjectContent::isObserved() {
+    return ObserverContainer::getInstance().isObserved(subject_);
 }
 
-void notifier::build_subject(subject_t subject)
+CallbackHandler Observer::attach(Subject_t subject, ObserverCallback_t observerCallback)
 {
-    observer_container::get_instance()->build_subject(subject);
+    return ObserverContainer::getInstance().attach(subject, observerCallback);
 }
 
-std::shared_ptr<subject_content>  notifier::query_subject(subject_t subject)
-{
-    return observer_container::get_instance()->query_subject(subject);
+void Observer::detach(Subject_t subject, CallbackHandler handler) {
+    ObserverContainer::getInstance().detach(subject, handler);
 }
 
-void observer_container::attach(subject_t subject, observer_cb_t observer_cb)
+void Notifier::buildSubject(Subject_t subject)
 {
-    // 主题未注册则观察失败
-    if (subject_container.find(subject) == subject_container.end()) {
-        std::cout << "subject: " << subject << " is not build" << std::endl;
+    ObserverContainer::getInstance().buildSubject(subject);
+}
+
+void Notifier::releaseSubject(Subject_t subject) {
+    ObserverContainer::getInstance().releaseSubject(subject);
+}
+
+std::shared_ptr<SubjectContent>  Notifier::querySubject(Subject_t subject)
+{
+    return ObserverContainer::getInstance().querySubject(subject);
+}
+
+CallbackHandler ObserverContainer::attach(Subject_t subject, ObserverCallback_t observerCallback)
+{
+    {
+        // 主题未注册则观察失败
+        std::unique_lock<std::mutex> lock(subjectMutex_);
+        if (subjectContainer_.find(subject) == subjectContainer_.end()) {
+            std::cout << "subject: " << subject << " is not exist" << std::endl;
+            return -1;  // -1表示注册失败，主题不存在
+        }
+    }
+
+    {
+        // 主题注册后，再添加该主题的观察者
+        std::unique_lock<std::mutex> lock(subjectCallbackMutex_);
+        auto subjectCbIter = subjectCallbackContainer_.find(subject);
+        if (subjectCbIter == subjectCallbackContainer_.end()) {
+            subjectCallbackContainer_[subject] = {observerCallback};
+            return 0;
+        }
+        subjectCbIter->second.push_back(observerCallback);
+        return subjectCbIter->second.size() - 1; // 返回回调的索引
+    }
+}
+
+// detach：用于将回调函数至为空指针
+void ObserverContainer::detach(Subject_t subject, CallbackHandler handler)
+{
+    {
+        std::unique_lock<std::mutex> lock(subjectMutex_);
+        if (subjectContainer_.find(subject) == subjectContainer_.end()) {
+            std::cout << "subject: " << subject << " is not exist" << std::endl;
+            return;
+        }
+    }
+
+    {
+        std::unique_lock<std::mutex> lock(subjectCallbackMutex_);
+        auto subjectCbIter = subjectCallbackContainer_.find(subject);
+        if (subjectCbIter == subjectCallbackContainer_.end()) {
+            return;
+        }
+        subjectCbIter->second[handler] = nullptr;
         return;
     }
-
-    // 主题注册后，再添加该主题的观察者
-    auto subjectcb_iter = subject_cb_container.find(subject);
-    if (subjectcb_iter == subject_cb_container.end()) {
-        subject_cb_container[subject] = {observer_cb};
-    } else {
-        subjectcb_iter->second.push_back(observer_cb);
-    }
-    std::cout << "attach subject: " << subject << std::endl;
-
 }
 
-void observer_container::build_subject(subject_t subject)
+void ObserverContainer::buildSubject(Subject_t subject)
 {
-    if (subject_container.find(subject) == subject_container.end()) {
-        subject_container[subject] = std::make_shared<subject_content>(subject);
-        std::cout << "build_subject: " << subject << std::endl;
+    std::unique_lock<std::mutex> lock(subjectMutex_);
+    if (subjectContainer_.find(subject) == subjectContainer_.end()) {
+        subjectContainer_[subject] = std::make_shared<SubjectContent>(subject);
+        std::cout << "buildSubject: " << subject << std::endl;
         return;
     }
     std::cout << "subject: " << subject << "already build" << std::endl;
 }
 
-std::shared_ptr<subject_content> observer_container::query_subject(subject_t subject)
+void ObserverContainer::releaseSubject(Subject_t subject) {
+    std::unique_lock<std::mutex> lock(subjectMutex_);
+    if (subjectContainer_.find(subject) == subjectContainer_.end()) {
+        std::cout << "subject: " << subject << " is not exist" << std::endl;
+        return;
+    }
+    subjectContainer_.erase(subject);
+    subjectCallbackContainer_.erase(subject);
+    std::cout << "subject: " << subject << " is released" << std::endl;
+}
+
+
+std::shared_ptr<SubjectContent> ObserverContainer::querySubject(Subject_t subject)
 {
-    auto subject_content_iter = subject_container.find(subject);
-    if (subject_content_iter == subject_container.end()) {
+    std::unique_lock<std::mutex> lock(subjectMutex_);
+    auto subject_content_iter = subjectContainer_.find(subject);
+    if (subject_content_iter == subjectContainer_.end()) {
         return nullptr;
     }
     return subject_content_iter->second;
 }
 
-std::vector<observer_cb_t> observer_container::query_observer(subject_t subject)
+std::vector<ObserverCallback_t> ObserverContainer::queryObserver(Subject_t subject)
 {
-    auto subject_cb_iter = subject_cb_container.find(subject);
-    return (subject_cb_iter == subject_cb_container.end()) ? std::vector<observer_cb_t>() : subject_cb_iter->second;
+    std::unique_lock<std::mutex> lock(subjectCallbackMutex_);
+    auto subject_cb_iter = subjectCallbackContainer_.find(subject);
+    return (subject_cb_iter == subjectCallbackContainer_.end()) ? std::vector<ObserverCallback_t>() : subject_cb_iter->second;
+}
+
+bool ObserverContainer::isObserved(Subject_t subject) {
+    std::unique_lock<std::mutex> lock(subjectCallbackMutex_);
+    auto subject_cb_iter = subjectCallbackContainer_.find(subject);
+    return (subject_cb_iter == subjectCallbackContainer_.end()) ? false : true;
+}
 }

@@ -26,44 +26,6 @@ void test_auto_reg()
 }
 
 // 三、测试观察者机制
-void cb1(subject_t subject, std::vector<int> message)
-{
-    std::cout << "cb1 receive notified message, subject  is: " << subject << " message is ";
-    for (auto each : message) {
-        std::cout << each << " ";
-    }
-    std::cout << std::endl;
-}
-
-void cb2(subject_t subject, std::vector<int> message)
-{
-    std::cout << "cb2 receive notified message, subject  is: " << subject << std::endl;
-}
-
-void test_notifier_and_observer()
-{
-    // 1、建立主题
-    subject_t  theme =  1;
-    notifier().build_subject(theme);
-    // 2、观察主题
-    observer().attach(theme, cb1);
-    observer().attach(theme, cb2);
-
-    // 3、通知主题
-    {
-        // 3.1、通知者定义通知的内容(之后可以用数据流，提升通知内容的扩展性)
-        std::vector<int> message{1,2,3};
-
-        // 3.2、通知者先查询主题是否存在：
-        auto subject = notifier().query_subject(theme);
-        if (subject ==  nullptr) {
-            std::cout << "subject: " << theme << " not exist" << std::endl;
-        }
-
-        // 3.3、主题发布通知(之后可以将当前有无观察者信息体现在客户侧)
-        subject->notify(message);
-    }
-}
 
 // 三、结构体大小比较
 void test_struct_compare()

@@ -5,11 +5,6 @@
 // 介绍：此工具实现了观察者机制(同进程内交互)：
 // 客户不需要针对业务特性实现观察者、通知者类，是一个即拿即用的工具
 // 观察者与通知者相互解耦。
-// 当前缺陷：
-//      1、未加锁，不保证线程安全
-//      2、消息内容固定为int，无法扩展：制约了回调函数与通知函数
-//      3、未考虑性能问题，只是玩具级工具
-//      4、未实现解观察detach()与释放主题release()两函数
 
 #ifndef INCLUDE_TOOLS_NOTIFIER_AND_OBSERVER
 #define INCLUDE_TOOLS_NOTIFIER_AND_OBSERVER
@@ -18,79 +13,106 @@
 #include <atomic>
 #include <utility>
 #include <functional>
+#include <string>
 #include <vector>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
-#include "class_register.h"
+#include <mutex>
 
-using subject_t = uint16_t;
+namespace Observer_ZZY
+{
+using Subject_t = std::uint32_t;
+using Content_t = std::string;
+using CallbackHandler = std::uint32_t;
 
 // 主题用于发布主题对应信息
-class subject_content
+class SubjectContent
 {
 public:
-    subject_content(subject_t subject) : subject_(subject) {}
+    SubjectContent(Subject_t subject) : subject_(subject) {}
 
-    void notify(std::vector<int> content);
+    void notify(Content_t content);
+
+    bool isObserved();
 
 private:
-    subject_t subject_;
+    Subject_t subject_;
 };
 
 // 通知者用于建立主题
-class notifier
+class Notifier
 {
 public:
-    notifier() = default;
+    Notifier() = default;
 
-    DISALLOW_COPY_AND_ASSIGN(notifier);
+    Notifier(const Notifier&) = delete;
+    Notifier& operator=(const Notifier&) = delete;
 
-    void build_subject(subject_t subject);
+    void buildSubject(Subject_t subject);
 
-    std::shared_ptr<subject_content> query_subject(subject_t subject);
+    void releaseSubject(Subject_t subject);
+
+    std::shared_ptr<SubjectContent> querySubject(Subject_t subject);
 };
 
-// 暂定回调函数入参为主题类型与值为int组成的vector，之后可扩展
-using observer_cb_t = std::function<void(subject_t, std::vector<int>)>;
+using ObserverCallback_t = std::function<void(Subject_t, Content_t)>;
 
 // 观察者用于观察主题
-class observer
+class Observer
 {
 public:
-    observer() = default;
+    Observer() = default;
 
-    void attach(subject_t subject, observer_cb_t observer_cb);
+    CallbackHandler attach(Subject_t subject, ObserverCallback_t observerCallback);
+    void detach(Subject_t subject, CallbackHandler handler);
 
-    DISALLOW_COPY_AND_ASSIGN(observer);
+    Observer(const Observer&) = delete;
+    Observer& operator=(const Observer&) = delete;
 };
 
 // 中介者：用于通知者与观察者解耦，对客户不可见，保存两者数据。
-class observer_container
+class ObserverContainer
 {
 public:
-    using subject_cb_container_t = std::unordered_map<subject_t, std::vector<observer_cb_t>>;
+    using SubjectCallbackContainer_t = std::unordered_map<Subject_t, std::vector<ObserverCallback_t>>;
 
-    using subject_container_t = std::unordered_map<subject_t, std::shared_ptr<subject_content>>;
+    using SubjectContainer_t = std::unordered_map<Subject_t, std::shared_ptr<SubjectContent>>;
 
 public:
-    SINGLETON_CLASS(observer_container);
+    static ObserverContainer &getInstance() {
+        static ObserverContainer observerContainer;
+        return observerContainer;
+    }
 
-    void attach(subject_t subject, observer_cb_t observer_cb);
+    CallbackHandler attach(Subject_t subject, ObserverCallback_t observerCallback);
+    void detach(Subject_t subject, CallbackHandler handler);
 
-    void build_subject(subject_t subject);
+    void buildSubject(Subject_t subject);
 
-    std::shared_ptr<subject_content> query_subject(subject_t subject);
+    /**
+     * @brief 释放主题，同时删掉观察者
+     * @param subject
+     */
+    void releaseSubject(Subject_t subject);
 
-    std::vector<observer_cb_t> query_observer(subject_t subject);
+    std::shared_ptr<SubjectContent> querySubject(Subject_t subject);
+
+    std::vector<ObserverCallback_t> queryObserver(Subject_t subject);
+
+    bool isObserved(Subject_t subject);
 
 private:
-    observer_container() = default;
+    ObserverContainer() = default;
 
 private:
-    subject_cb_container_t subject_cb_container;
+    SubjectCallbackContainer_t subjectCallbackContainer_;
+    std::mutex subjectCallbackMutex_;
 
-    subject_container_t subject_container;
+    SubjectContainer_t subjectContainer_;
+    std::mutex subjectMutex_;
 };
+
+} // namespace Observer_ZZY
 
 #endif
