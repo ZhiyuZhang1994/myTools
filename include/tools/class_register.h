@@ -40,9 +40,9 @@ public:
         std::cout << "class_id: " << class_id << " already signed!" << std::endl;
     }
 
-    // 激活各类并初始化
+    // 构造各类并初始化
     void active() {
-        if (activated) {
+        if (activated_) {
             std::cout << "all the services are activated!" << std::endl;
             return;
         }
@@ -61,7 +61,7 @@ public:
                 each.second->initialize();
             }
         }
-        activated = true;
+        activated_ = true;
     }
 
     std::shared_ptr<base_class> get_class_ptr(class_id_t class_id) {
@@ -78,7 +78,7 @@ private:
     std::mutex class_reg_func_mutex_;
     std::unordered_map<class_id_t, std::shared_ptr<base_class>> class_ptr_container;
     std::mutex class_ptr_mutex_;
-    bool activated = false;
+    bool activated_ = false;
 };
 
 
@@ -95,10 +95,10 @@ public:
 };
 
 // 类自注册宏
-#define CLASS_REGISTER(class_name, class_id, ...)                           \
+#define CLASS_REGISTER(class_name, class_id, ...)                            \
     static std::shared_ptr<base_class> create_##class_name##_register_func() \
     {                                                                        \
-        return std::make_shared<class_name>(__VA_ARGS__);                           \
+        return std::make_shared<class_name>(__VA_ARGS__);                    \
     }                                                                        \
     static class_register _class_reg_##class_name(class_id, create_##class_name##_register_func)
 

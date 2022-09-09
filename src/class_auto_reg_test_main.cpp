@@ -35,7 +35,7 @@ private:
     DISALLOW_COPY_AND_ASSIGN(C);
 };
 
-const std::string C_NAME = "service.VTK.camera";
+const std::string C_NAME = "service.vtk.camera";
 const class_id_t C_ID = GENERATE_SUBJECT_CODE(C_NAME);
 DECLARE_CLASS_PTR_TYPE(C);
 CLASS_REGISTER(C, C_ID, 1, 2);
@@ -43,15 +43,16 @@ CLASS_REGISTER(C, C_ID, 1, 2);
 
 // VTK 操作类仓库：
 
-int main()  {
+int main() {
 
     // vtk操作类初始化
     class_repository::get_instance()->active();
 
     CPtr ial_tsmode_ptr = GET_CLASS_PTR(C);
     if (!ial_tsmode_ptr) {
-        return;
+        return 0;
     }
+
     ial_tsmode_ptr->func1();
     getchar();
 }
