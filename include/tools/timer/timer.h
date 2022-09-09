@@ -14,6 +14,26 @@
 #include <utility>
 #include <vector>
 
+
+// 期望实现：
+
+using TimerHandler = std::uint32_t;
+using CallbackType = std::function<void()>;
+
+class Timer {
+    static TimerHandler once(CallbackType callback) {
+        
+    }
+}
+
+// 调用形式
+TimerHandler pickTimerHandler = Timer::once([]() {
+    std::cout << "timer processed" << std::endl;
+});
+
+
+
+
 class TimerManager;
 
 // 定时任务类：
