@@ -1,7 +1,7 @@
 /**
  * @brief 所有定时任务放在一个定时器线程中
  * @brief 该工具未限制堆大小，存在队列过大风险
- * @brief 任务在栈上，离开左右与timer变野指针，需要搞到堆上，或构造时返回一个timer_handler句柄用于管理
+ * @brief 任务在栈上，离开作用域timer变野指针，需要搞到堆上，或构造时返回一个timer_handler句柄用于管理
  * @author http://t.zoukankan.com/warnet-p-10528650.html
  * @date 2022/09/07
  */
