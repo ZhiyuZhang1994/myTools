@@ -1,52 +1,54 @@
 /**
  * @brief 所有定时任务放在一个定时器线程中
- * @brief 该工具未限制堆大小，存在队列过大风险
- * @brief 任务在栈上，离开作用域timer变野指针，需要搞到堆上，或构造时返回一个timer_handler句柄用于管理
  * @author http://t.zoukankan.com/warnet-p-10528650.html
- * @date 2022/09/07
+ * @date 2022-09-07
  */
 
 #include "tools/timer/timer.h"
 #include <utility>
+#include <iostream>
 
-//////////////////////////////////////////////////////////////////////////
-// Timer
+///////////////////////////////////Timer///////////////////////////////////////
 
-// 默认构造没有指定任务，因此 heapIndex_ = -1, interval_ = 0
-Timer::Timer(TimerManager &manager)
-    : manager_(manager), timerType_(CIRCLE), callbackArgs_(nullptr), interval_(0), expires_(0), heapIndex_(-1) {
-}
-
-Timer::~Timer() {
-    stop();
+void Timer::start(uint64_t ms, CallbackType func, bool loop) {
+    interval_ = ms;
+    timerCallback_ = std::move(func);
+    loop_ = loop;
+    using namespace std::chrono;
+    expires_ = interval_ + duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
+    TimerManager::instance().addTimer(this);
 }
 
 // 主动停止任务
 void Timer::stop() {
     if (heapIndex_ != -1) {
-        manager_.removeTimer(this);
+        TimerManager::instance().removeTimer(this);
         heapIndex_ = -1;
     }
+    delete this;
 }
 
 void Timer::onTimer(std::uint64_t now) {
-    if (timerType_ == Timer::CIRCLE) {
+    timerCallback_();
+    if (loop_) {
         expires_ = interval_ + now;
-        manager_.addTimer(this);
+        TimerManager::instance().addTimer(this);
     } else {
-        heapIndex_ = -1;
+        stop();
     }
-    timerCallback_(callbackArgs_);
 }
 
-//////////////////////////////////////////////////////////////////////////
-// TimerManager
+/////////////////////////////////////TimerManager/////////////////////////////////////
 
 void TimerManager::addTimer(Timer *timer) {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     timer->heapIndex_ = heap_.size();
     HeapEntry entry = {timer->expires_, timer};
     heap_.push_back(entry);
+    constexpr std::uint8_t MAX_TASK_NUMBER = 10;
+    if (heap_.size() > MAX_TASK_NUMBER) {
+        std::cout << "too many tasks in timer" << std::endl;
+    }
     upHeap(heap_.size() - 1);
 }
 
@@ -60,12 +62,14 @@ void TimerManager::removeTimer(Timer *timer) {
             swapHeap(index, heap_.size() - 1);
             heap_.pop_back();
             std::size_t parent = (index - 1) / 2;
-            if (index > 0 && heap_[index].time < heap_[parent].time)
+            if (index > 0 && heap_[index].time < heap_[parent].time) {
                 upHeap(index);
-            else
+            } else {
                 downHeap(index);
+            }
         }
     }
+    timer->heapIndex_ = -1;
 }
 
 void TimerManager::detectTimers() {
@@ -124,6 +128,7 @@ void TimerManager::start() {
 void TimerManager::stop() {
     for (auto entry : heap_) {
         removeTimer(entry.timer);
+        entry.timer->stop();
     }
     finish_ = true;
 }

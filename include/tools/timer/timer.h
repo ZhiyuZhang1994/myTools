@@ -1,8 +1,7 @@
 /**
  * @brief 所有定时任务放在一个定时器线程中
- * @brief 该工具未限制堆大小，存在队列过大风险
  * @author http://t.zoukankan.com/warnet-p-10528650.html
- * @date 2022/09/07
+ * @date 2022-09-07
  */
 
 #ifndef INCLUDE_TOOLS_TIMER_TIMER_H
@@ -14,78 +13,59 @@
 #include <utility>
 #include <vector>
 
-
-// // 期望实现：
-
-// using TimerHandler = std::uint32_t;
-// using CallbackType = std::function<void()>;
-
-// class Timer {
-//     static TimerHandler once(CallbackType callback) {
-        
-//     }
-// };
-
-// // 调用形式
-// TimerHandler pickTimerHandler = Timer::once([]() {
-//     std::cout << "timer processed" << std::endl;
-// });
-
-
-
-
-class TimerManager;
-
-// 定时任务类：
-// 1、表示一个定时任务：任务编写是该类型：std::function<void(void *)>
-// 2、三种任务类型：一次性、周期性、一次延期执行性
 class Timer {
 public:
-    enum TimerType {
-        ONCE,  // 一次性任务
-        CIRCLE,  // 周期性任务
-        TIMEOUT  // 延迟执行一次的任务
-    };
-    using CallbackType = std::function<void(void *)>;
+    using CallbackType = std::function<void()>;
+    using TimeHandler = Timer*;
 
-    explicit Timer(TimerManager &manager);
-    ~Timer();
+public:
+    static TimeHandler create() { return new Timer; }
 
-    // 创建周期性任务
-    template<typename Rep, typename Period>
-    void start(CallbackType fun, const std::chrono::duration<Rep, Period> &interval, void *args = nullptr, TimerType timeType = CIRCLE);
+    // 停止执行任务: 周期性任务可以停止，一次性任务均不可停止。
+    void stop();
+
+    // 周期性任务
+    template<typename callback, typename... arguments>
+    static TimeHandler loop(uint64_t ms, callback&& func, arguments&&... args) {
+        TimeHandler handler = create();
+        std::function<void()> task(std::bind(std::forward<callback>(func), std::forward<arguments>(args)...));
+        handler->start(ms, task, true);
+        return handler;
+    }
 
     // 创建一次性任务
-    inline void runOnce(CallbackType fun, void *args = nullptr) {
+    template<typename callback, typename... arguments>
+    void once(callback&& func, arguments&&... args) {
         using namespace std::literals::chrono_literals;
-        start(std::move(fun), 0s, args, ONCE);
+        std::function<void()> task(std::bind(std::forward<callback>(func), std::forward<arguments>(args)...));
+        TimeHandler handler = create();
+        handler->start(0, task, false);
     }
 
     // 创建一次性延迟执行任务
-    template<typename Rep, typename Period>
-    inline void Timeout(CallbackType fun, const std::chrono::duration<Rep, Period> &timeout, void *args = nullptr) {
+    template<typename callback, typename... arguments>
+    void onceDelay(uint64_t delayMS, callback&& func, arguments&&... args) {
         using namespace std::literals::chrono_literals;
-        // auto tem_func = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
-        start(std::move(fun), timeout, args, TIMEOUT);
+        std::function<void()> task(std::bind(std::forward<callback>(func), std::forward<arguments>(args)...));
+        start(delayMS, task, false);
     }
 
-    // 停止执行任务
-    void stop();
-
 private:
+    Timer() = default;
+    void start(uint64_t ms, CallbackType fun, bool loop = false);
+
     // 到时间了开始执行
     void onTimer(uint64_t now);
 
 private:
     friend class TimerManager;
-    TimerManager &manager_;  // 定时器管理类引用
-    TimerType timerType_;  // 任务类型
-    CallbackType timerCallback_;  // 任务函数
-    void *callbackArgs_;  // 任务参数
-    std::uint64_t interval_;  // 任务执行周期
-    std::uint64_t expires_;  // 指定任务到期结束时间，用于在最小堆中任务执行顺序排序
-    std::int32_t heapIndex_; // 用于任务索引 -1表示已经不再队列中，即任务执行完成了
+    bool loop_ = false;
+    CallbackType timerCallback_ = nullptr;  // 任务函数
+    std::uint64_t interval_ = 0;  // 任务执行周期
+    std::uint64_t expires_ = 0;  // 指定任务到期结束时间，用于在最小堆中任务执行顺序排序
+    std::int32_t heapIndex_ = -1; // 用于任务索引 -1表示已经不再队列中，即任务执行完成了
 };
+using TimeHandler = Timer*;
 
 // 定时器管理类：
 // 1、管理了定时器线程：该线程处理所有定时任务
@@ -93,7 +73,10 @@ private:
 // 3、最高精度未100ms
 class TimerManager {
 public:
-    TimerManager() : finish_(false) {}
+    static TimerManager &instance() {
+        static TimerManager _instance;
+        return _instance;
+    }
     ~TimerManager() {
         stop();
     }
@@ -105,24 +88,14 @@ public:
     void start();
     void stop();
 
-public:
-    /**
-     * @brief 全局实例
-     * @return TimerManager全局实例引用
-     */
-    static TimerManager &instance() {
-        static TimerManager _instance;
-        return _instance;
-    }
-
 private:
     friend class Timer;
+    TimerManager() = default;
 
     // 向最小堆任务队列中添加定时任务
     void addTimer(Timer *timer);
     // 在最小堆任务队列中删除定时任务
     void removeTimer(Timer *timer);
-
     // 查看堆顶元素是否到时，到时则执行对应任务
     void detectTimers();
 
@@ -147,27 +120,7 @@ private:
     // 自旋锁，可重入
     std::recursive_mutex mutex_;
     // 是否停止定时任务
-    bool finish_;
+    bool finish_ = false;
 };
-
-/**
- * 启动定时器
- * @param fun
- * @param interval 如果是CYCLE表示间隔时间;如果是其他则表示延迟启动时间
- * @param args
- * @param timeType
- */
-template<typename Rep, typename Period>
-void Timer::start(CallbackType fun, const std::chrono::duration<Rep, Period> &interval, void *args, TimerType timeType) {
-    using namespace std::chrono;
-
-    stop();
-    interval_ = duration_cast<milliseconds>(interval).count();
-    timerCallback_ = std::move(fun);
-    callbackArgs_ = args;
-    timerType_ = timeType;
-    this->expires_ = this->interval_ + duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
-    manager_.addTimer(this);
-}
 
 #endif
