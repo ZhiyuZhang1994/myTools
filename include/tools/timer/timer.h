@@ -15,21 +15,21 @@
 #include <vector>
 
 
-// 期望实现：
+// // 期望实现：
 
-using TimerHandler = std::uint32_t;
-using CallbackType = std::function<void()>;
+// using TimerHandler = std::uint32_t;
+// using CallbackType = std::function<void()>;
 
-class Timer {
-    static TimerHandler once(CallbackType callback) {
+// class Timer {
+//     static TimerHandler once(CallbackType callback) {
         
-    }
-}
+//     }
+// };
 
-// 调用形式
-TimerHandler pickTimerHandler = Timer::once([]() {
-    std::cout << "timer processed" << std::endl;
-});
+// // 调用形式
+// TimerHandler pickTimerHandler = Timer::once([]() {
+//     std::cout << "timer processed" << std::endl;
+// });
 
 
 
@@ -65,6 +65,7 @@ public:
     template<typename Rep, typename Period>
     inline void Timeout(CallbackType fun, const std::chrono::duration<Rep, Period> &timeout, void *args = nullptr) {
         using namespace std::literals::chrono_literals;
+        // auto tem_func = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
         start(std::move(fun), timeout, args, TIMEOUT);
     }
 

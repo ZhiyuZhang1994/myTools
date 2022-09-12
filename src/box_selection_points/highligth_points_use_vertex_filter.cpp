@@ -5,6 +5,7 @@
  */
 // 参考：https://blog.csdn.net/Asimov_Liu/article/details/82992319
 
+#include <vtkLongArray.h>
 #include <vtkActor.h>
 #include <vtkAreaPicker.h>
 #include <vtkDataSetMapper.h>
@@ -37,7 +38,6 @@
 #include <vtkCellCenters.h>
 #include <vtkTextProperty.h>
 #include <vtkCylinderSource.h>
-#include <vtkLongArray.h>
 #include <vtkVertex.h>
 #include <vtkUnstructuredGrid.h>
 
