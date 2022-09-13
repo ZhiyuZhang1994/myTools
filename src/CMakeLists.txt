@@ -12,11 +12,11 @@ aux_source_directory(. source_list)
 add_library(xx SHARED $<TARGET_OBJECTS:ax> $<TARGET_OBJECTS:bx>)
 
 # 生成可执行文件
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ./tools/timer_test_main.cpp ./tools/timer.cpp )
+add_executable(Tutorial_Step1 MACOSX_BUNDLE points_id_show.cpp )
 
 # 添加链接库
-# target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES} xx boost_serialization)
-target_link_libraries(Tutorial_Step1 ${Boost_SERIALIZATION_LIBRARY_RELEASE})
+target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES})
+# target_link_libraries(Tutorial_Step1 ${Boost_SERIALIZATION_LIBRARY_RELEASE})
 # target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES} xx boost_serialization boost_system)
 
 # vtk_module_autoinit is needed
