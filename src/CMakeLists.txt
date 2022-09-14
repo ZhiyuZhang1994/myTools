@@ -12,7 +12,7 @@ aux_source_directory(. source_list)
 add_library(xx SHARED $<TARGET_OBJECTS:ax> $<TARGET_OBJECTS:bx>)
 
 # 生成可执行文件
-add_executable(Tutorial_Step1 MACOSX_BUNDLE points_id_show.cpp )
+add_executable(Tutorial_Step1 MACOSX_BUNDLE ./construct_test_main.cpp )
 
 # 添加链接库
 target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES})
