@@ -68,8 +68,11 @@ public:
     extractGeometry->SetInputData(this->Points);
     extractGeometry->Update();
 
+    auto oriData = extractGeometry->GetOutput();
+    oriData->PrintSelf(std::cout,vtkIndent(2));
+
     // 获取几何对象数据画图
-    this->SelectedMapper->SetInputData(extractGeometry->GetOutput());
+    this->SelectedMapper->SetInputData(oriData);
 
     this->SelectedActor->GetProperty()->SetColor(
         colors->GetColor3d("Red").GetData());

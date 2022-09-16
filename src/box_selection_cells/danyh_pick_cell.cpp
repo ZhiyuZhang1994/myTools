@@ -105,6 +105,7 @@ void InteractorStyle::OnLeftButtonDown() {
         mapper->SetInputData(selected_cells);
         actor->SetMapper(mapper);
         actor->GetProperty()->EdgeVisibilityOn();
+        actor->GetProperty()->SetEdgeVisibility(false); // 修复显示条形颜色
         actor->GetProperty()->SetColor(0.0, 0.0, 0.0);
         Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->AddActor(actor);
         this->selected_actors.push_back(actor);

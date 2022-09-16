@@ -90,6 +90,7 @@
     "mutex": "cpp",
     "thread": "cpp",
     "iomanip": "cpp",
-    "future": "cpp"
+    "future": "cpp",
+    "set": "cpp"
 }
 }
