@@ -10,19 +10,22 @@
 #include <mutex>
 #include <functional>
 #include <future>
-
+#include <string>
+#include <condition_variable>
+#include <iostream>
 
 class EndlessRunService {
 public:
-    EndlessRunService() = default;
+    EndlessRunService(std::string serviceName);
 
     ~EndlessRunService() {
-        shutdown_ = true;
-        cvPool_.notify_all();
-        t_.join();
+        stop();
     }
 
+    void stop();
+
     void endless_run();
+
     /**
      * @brief 异步提交任务到邮箱
      * @tparam F 任务类型
@@ -40,32 +43,38 @@ public:
         };
         queue_.enqueue(wrapperFunc);
 
-        cvPool_.notify_one();
+        cv.notify_one();
         return taskPtr->get_future();
     }
     
 private:
-    std::thread t_;
+    std::string serviceName_;
+    std::thread thread_;
     std::atomic<bool> running_{false};
-    SafeQueue<std::function<void()>> queue_;
-    // 任务队列互斥量
-    std::mutex mutQueue_;
-    // 线程环境锁
-    std::condition_variable cvPool_;
-    // 线程是否关闭
-    bool shutdown_;
+    SafeQueue<std::function<void()>> queue_; // 任务队列
+    std::mutex mtx;
+    std::condition_variable cv;
 };
 
+
+EndlessRunService::EndlessRunService(std::string serviceName) : serviceName_(serviceName) {}
+
 void EndlessRunService::endless_run() {
-    t_ = std::thread([this]() {
+    if (running_) {
+        std::cout << "already started!" << std::endl;
+        return;
+    }
+
+    running_ = true;
+    thread_ = std::thread([this]() {
         std::function<void()> func;
         bool dequeued;
-        while (!shutdown_) {
+        while (running_) {
             {
                 // 加锁等待任务入队
-                std::unique_lock<std::mutex> lock(mutQueue_);
+                std::unique_lock<std::mutex> lock(mtx);
                 if (queue_.empty()) {
-                    cvPool_.wait(lock);
+                    cv.wait(lock);
                 }
                 dequeued = queue_.dequeue(func);
             }
@@ -76,3 +85,10 @@ void EndlessRunService::endless_run() {
     });
 }
 
+void EndlessRunService::stop() {
+    running_ = false;
+    cv.notify_one();
+    if (thread_.joinable()) {
+        thread_.join();
+    }
+}

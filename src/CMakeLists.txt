@@ -12,7 +12,7 @@ add_library(xx SHARED $<TARGET_OBJECTS:ax>)
 
 # 生成可执行文件
 # add_executable(Tutorial_Step1 MACOSX_BUNDLE ./box_selection_cells/highligth_cells_add_fieiddata.cpp )
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ./box_selection_cells/highligth_cells.cpp)
+add_executable(Tutorial_Step1 MACOSX_BUNDLE ./message_service.cpp)
 
 
 # 添加链接库
