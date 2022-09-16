@@ -16,18 +16,15 @@ RenderingCore
 RenderingFreeType
 RenderingGL2PSOpenGL2
 RenderingOpenGL2
-CommonColor
-CommonCore
-FiltersSources
-InteractionStyle
-RenderingContextOpenGL2
-RenderingCore
-RenderingFreeType
-RenderingGL2PSOpenGL2
-RenderingOpenGL2
+
 GUISupportQt
 RenderingQt
 RenderingAnnotation
+
+IOGeometry
+IOLegacy
+IOPLY
+IOXML
 )
 
 if (NOT VTK_FOUND)

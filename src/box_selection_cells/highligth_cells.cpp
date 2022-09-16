@@ -37,10 +37,6 @@
 #include <vtkTextProperty.h>
 #include <vtkCylinderSource.h>
 
-#if VTK_VERSION_NUMBER >= 89000000000ULL
-#define VTK890 1
-#endif
-
 namespace {
 // Define interaction style
 class InteractorStyle : public vtkInteractorStyleRubberBandPick
@@ -54,6 +50,7 @@ public:
     this->SelectedMapper = vtkSmartPointer<vtkDataSetMapper>::New();
     this->SelectedActor = vtkSmartPointer<vtkActor>::New();
     this->SelectedActor->SetMapper(SelectedMapper);
+    this->SelectedMapper->ScalarVisibilityOff();
   }
 
   virtual void OnLeftButtonUp() override
@@ -71,50 +68,8 @@ public:
     extractGeometry->SetInputData(this->Points);
     extractGeometry->Update();
 
-    // {
-    //     // 获取points对象:vtkPoints中id为下标索引，没有节点编号的概念
-    //     vtkUnstructuredGrid* data = extractGeometry->GetOutput();
-    //     vtkPoints* points = data->GetPoints();
-    //     auto xx = points->GetData();
-    //     xx->PrintSelf(std::cout,vtkIndent(2));
-    //     auto x = points->GetNumberOfPoints();
-    //     std::cout << "zzyx" << x << std::endl;
-    //     auto data_x = points->GetPoint(0);
-    //     std::cout << "zzy data_x" << data_x[0] << data_x[1] << data_x[2] << std::endl;
-    // }
-
-
-    // 用points建立vertex：形成单元集合
-    vtkNew<vtkVertexGlyphFilter> glyphFilter;
-    glyphFilter->SetInputConnection(extractGeometry->GetOutputPort());
-    glyphFilter->Update();
-
     // 获取几何对象数据画图
-    vtkPolyData* selected = glyphFilter->GetOutput();
-    std::cout << "Selected " << selected->GetNumberOfPoints() << " points."
-              << std::endl;
-    std::cout << "Selected " << selected->GetNumberOfCells() << " cells."
-              << std::endl;
-    this->SelectedMapper->ScalarVisibilityOff();
-
     this->SelectedMapper->SetInputData(extractGeometry->GetOutput());
-
-    {
-        std::cout << "zzy@@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-        selected->GetPointData()->PrintSelf(std::cout,vtkIndent(2));
-        std::cout << "zzy@@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-    }
-
-    vtkIdTypeArray* ids = dynamic_cast<vtkIdTypeArray*>(
-        selected->GetPointData()->GetArray("OriginalIds"));
-    if (!ids) {
-        std::cout << "nullptr" << std::endl;
-        return;
-    }
-    for (vtkIdType i = 0; i < ids->GetNumberOfTuples(); i++)
-    {
-      std::cout << "Id " << i << " : " << ids->GetValue(i) << std::endl;
-    }
 
     this->SelectedActor->GetProperty()->SetColor(
         colors->GetColor3d("Red").GetData());
@@ -122,7 +77,6 @@ public:
 
     this->CurrentRenderer->AddActor(SelectedActor);
     this->GetInteractor()->GetRenderWindow()->Render();
-    this->HighlightProp(NULL);
   }
 
   void SetPoints(vtkSmartPointer<vtkPolyData> points)
@@ -146,13 +100,11 @@ int main(int, char*[])
     vtkNew<vtkCylinderSource> cylinder;
     cylinder->SetResolution(4);
     cylinder->Update();
-    // cylinder->GetOutput()->PrintSelf(std::cout,vtkIndent(2));
-
 
     // 获取点的label，命名label数组
     vtkNew<vtkIdFilter> idFilter;
     idFilter->SetInputConnection(cylinder->GetOutputPort());
-    idFilter->SetIdsArrayName("OriginalIds");
+    idFilter->SetPointIdsArrayName("OriginalIds");
     idFilter->Update();
 
     // 获取points集合:16-point 6-cell
@@ -165,7 +117,6 @@ int main(int, char*[])
     {
         vtkIdTypeArray* ids = dynamic_cast<vtkIdTypeArray*>(
         input->GetPointData()->GetArray("OriginalIds"));
-        std::cout << "zzyXXXXXXXXXX!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
         if (!ids) {
             std::cout << "nullptr" << std::endl;
         }
@@ -193,15 +144,6 @@ int main(int, char*[])
     vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
     renderWindowInteractor->SetPicker(areaPicker);
     renderWindowInteractor->SetRenderWindow(renderWindow);
-
-
-    // // 加label
-    // vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
-    // nodeLabelMapper->SetInputConnection(idFilter->GetOutputPort());
-    // vtkSmartPointer<vtkActor2D> actor2D = vtkSmartPointer<vtkActor2D>::New();
-    // nodeLabelMapper->GetLabelTextProperty()->SetColor(0.0, 1.0, 0.0);
-    // actor2D->SetMapper(nodeLabelMapper);
-    // renderer->AddActor(actor2D);
 
     vtkNew<InteractorStyle> style;
     style->SetPoints(input);
