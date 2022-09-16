@@ -1,5 +1,5 @@
 /**
- * @brief 显示节点ID编号
+ * @brief 显示节点与单元ID编号
  * @author zhiyu.zhang@cqbdri.pku.edu.cn
  * @date 2022-08-23
  */
@@ -50,20 +50,21 @@ int main(int, char*[])
     cylinder->Update();
     vtkPolyData* polyData = cylinder->GetOutput();
 
-    // 数据集添加属性：用于label拾取的属性
-    auto count = polyData->GetNumberOfPoints();  // 16
-    long *arr=new long[count];
-    for (int i = 0; i < count; i++) {
-        arr[i] = 33;
+    {
+        // 点数据集添加属性：用于label拾取的属性
+        auto count = polyData->GetNumberOfPoints();  // 16
+        long *arr=new long[count];
+        for (int i = 0; i < count; i++) {
+            arr[i] = 33;
+        }
+        vtkNew<vtkLongArray> pointIndex;
+        pointIndex->SetArray(arr, count, 1);
+        pointIndex->SetName("PointsIDSet");
+        polyData->GetPointData()->AddArray(pointIndex);
     }
-    vtkNew<vtkLongArray> pointIndex;
-    pointIndex->SetArray(arr, count, 1);
-    pointIndex->SetName("PointsIDSet");
-    polyData->GetPointData()->AddArray(pointIndex);
-
-
 
     {
+        // 单元数据集添加属性：用于label拾取的属性
         auto count = polyData->GetNumberOfCells(); // 6
         long *arr=new long[count];
         for (int i = 0; i < count; i++) {

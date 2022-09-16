@@ -3,16 +3,17 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # 添加子目录
 add_subdirectory(a)
-add_subdirectory(b)
 
 # 获取当前文件夹下cpp
 aux_source_directory(. source_list)
 
 # 生成库文件
-add_library(xx SHARED $<TARGET_OBJECTS:ax> $<TARGET_OBJECTS:bx>)
+add_library(xx SHARED $<TARGET_OBJECTS:ax>)
 
 # 生成可执行文件
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ./construct_test_main.cpp )
+# add_executable(Tutorial_Step1 MACOSX_BUNDLE ./box_selection_cells/highligth_cells_add_fieiddata.cpp )
+add_executable(Tutorial_Step1 MACOSX_BUNDLE ./box_selection_points/highligth_points.cpp )
+
 
 # 添加链接库
 target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES})

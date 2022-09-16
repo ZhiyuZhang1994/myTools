@@ -1,5 +1,5 @@
 /**
- * @brief 基于官方文档的节点选取交互
+ * @brief 基于官方文档的单元选取交互
  * @author zhiyu.zhang@cqbdri.pku.edu.cn
  * @date 2022-08-23
  */
