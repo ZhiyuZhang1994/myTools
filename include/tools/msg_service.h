@@ -19,13 +19,13 @@ public:
     using Message = std::string;
 
 public:
-    MessageService(std::string serviceName);
+    explicit MessageService(std::string serviceName);
 
     ~MessageService() {
         stop();
     }
 
-    std::string serviceName() {return serviceName_};
+    std::string serviceName() { return serviceName_; };
 
     // 启动消息线程
     void init();
@@ -39,7 +39,7 @@ public:
     // 处理消息：子类继承该函数，不同子类处理不同消息
     virtual void process_msg(Message) {}
 
-private:
+protected:
     std::string serviceName_;
     std::thread thread_;
     std::atomic<bool> running_{false};

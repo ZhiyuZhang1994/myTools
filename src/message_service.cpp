@@ -6,26 +6,34 @@
 
 #include "tools/tassk_class.h"
 #include "tools/msg_service.h"
+#include "tools/table_driven.h"
 #include <utility>
 #include <iostream>
 
 class process_status_bar_msg : public MessageService {
 public:
-    process_status_bar_msg(std::string className) : MessageService(className) {}
+    explicit process_status_bar_msg(std::string serviceName) : MessageService(serviceName) {}
     virtual void process_msg(Message) override;
 
+private:
+    void process_output_msg(Message message);
 };
 
 void process_status_bar_msg::process_msg(Message message) {
-    
+
+    TableDriven<uint16_t> tableDriven{
+        {1, [this, message]() { process_output_msg(message); }},
+    };
+    tableDriven.handleKey(1);
+}
+void process_status_bar_msg::process_output_msg(Message message) {
+    std::cout << message << std::endl;
 }
 
-
 int main() {
-    EndlessRunService service("abc");
-    service.submit([](){std::cout << "test endless run func" << std::endl;});
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    service.endless_run();
+    process_status_bar_msg service("abc");
+    service.init();
+    service.send_msg("zzy");
 
     getchar();
     return 0;
