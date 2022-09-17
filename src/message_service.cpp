@@ -5,8 +5,21 @@
  */
 
 #include "tools/tassk_class.h"
+#include "tools/msg_service.h"
 #include <utility>
 #include <iostream>
+
+class process_status_bar_msg : public MessageService {
+public:
+    process_status_bar_msg(std::string className) : MessageService(className) {}
+    virtual void process_msg(Message) override;
+
+};
+
+void process_status_bar_msg::process_msg(Message message) {
+    
+}
+
 
 int main() {
     EndlessRunService service("abc");
