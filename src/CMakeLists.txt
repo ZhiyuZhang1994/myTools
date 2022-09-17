@@ -16,8 +16,7 @@ add_executable(Tutorial_Step1 MACOSX_BUNDLE ./message_service.cpp ./tools/msg_se
 
 
 # 添加链接库
-target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES})
-# target_link_libraries(Tutorial_Step1 ${Boost_SERIALIZATION_LIBRARY_RELEASE})
+target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES} ${Boost_SERIALIZATION_LIBRARY_RELEASE})
 # target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES} xx boost_serialization boost_system)
 
 # vtk_module_autoinit is needed

@@ -91,6 +91,7 @@
     "thread": "cpp",
     "iomanip": "cpp",
     "future": "cpp",
-    "set": "cpp"
+    "set": "cpp",
+    "*.ipp": "cpp"
 }
 }

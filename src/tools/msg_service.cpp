@@ -17,7 +17,7 @@ void MessageService::init() {
     running_ = true;
     thread_ = std::thread([this]() {
         bool dequeued;
-        Message message;
+        Content_t message;
         while (running_) {
             {
                 // 加锁等待任务入队
@@ -42,7 +42,7 @@ void MessageService::stop() {
     }
 }
 
-void MessageService::send_msg(Message message) {
+void MessageService::send_msg(Content_t message) {
     queue_.enqueue(message);
     cv.notify_one();
 }
