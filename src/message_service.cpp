@@ -32,6 +32,7 @@ void process_status_bar_msg::process_msg(Content_t message) {
     };
     tableDriven.handleKey(messageType);
 }
+
 void process_status_bar_msg::process_output_msg(InputWrapper& messageIn) {
     std::cout << "process msg" << 1 << std::endl;
     std::uint16_t id = 0;
