@@ -54,20 +54,12 @@ private:
 vtkStandardNewMacro(InteractorStyle);
 
 InteractorStyle::InteractorStyle() {
-    // this->SelectedMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-    // this->SelectedActor = vtkSmartPointer<vtkActor>::New();
-    // this->SelectedActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
-    // this->SelectedActor->SetMapper(SelectedMapper);
+
 }
 
 void InteractorStyle::OnLeftButtonDown() {
-   
-    /////////////////////////////////////////////////////////////////////////////////////////
-    vtkNew<vtkNamedColors> colors;
     //鼠标点击位置(x,y)
     int *pos = this->GetInteractor()->GetEventPosition();
-    // //上一次鼠标点击的位置
-    // int *last_pos = this->GetInteractor()->GetLastEventPosition();
 
     auto picker = this->Interactor->GetPicker();
     //Pick(x, y, z, vtkRenderer)
@@ -105,7 +97,9 @@ void InteractorStyle::OnLeftButtonDown() {
         mapper->SetInputData(selected_cells);
         actor->SetMapper(mapper);
         actor->GetProperty()->EdgeVisibilityOn();
+
         actor->GetProperty()->SetEdgeVisibility(false); // 修复显示条形颜色
+
         actor->GetProperty()->SetColor(0.0, 0.0, 0.0);
         Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->AddActor(actor);
         this->selected_actors.push_back(actor);
@@ -178,11 +172,6 @@ int main(int, char*[]) {
     id_filter->SetInputConnection(cylinder->GetOutputPort());
     id_filter->Update();
 
-    // // This is needed to convert the ouput of vtkIdFilter (vtkDataSet) back to vtkPolyData
-    // vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter =
-    //     vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-    // surfaceFilter->SetInputConnection(idFilter->GetOutputPort());
-    // surfaceFilter->Update();
 
     // 创建mapper：显示带label属性的actor，框选时才能知道选中了哪些label
     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -212,21 +201,7 @@ int main(int, char*[]) {
     render_window_interactor->SetPicker(picker);
     render_window_interactor->SetRenderWindow(render_window);
 
-    {
-        // 加label
-        vtkNew<vtkIdFilter> id_filter;
-        id_filter->SetInputData(poly_data);
-        id_filter->Update();
-        vtkSmartPointer<vtkLabeledDataMapper> node_label_mapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
-        node_label_mapper->SetInputConnection(id_filter->GetOutputPort());
-        vtkSmartPointer<vtkActor2D> actor2D = vtkSmartPointer<vtkActor2D>::New();
-        node_label_mapper->GetLabelTextProperty()->SetColor(0.0, 1.0, 0.0);
-        actor2D->SetMapper(node_label_mapper);
-        renderer->AddActor(actor2D);
-    }
-
     vtkNew<InteractorStyle> style;
-    //style->StartSelect(); // 开始选择按键的设置
     style->set_points(poly_data);
     style->SetDefaultRenderer(renderer);
     render_window_interactor->SetInteractorStyle(style);
