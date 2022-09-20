@@ -8,6 +8,7 @@
 #ifndef INCLUDE_TOOLS_NOTIFIER_AND_OBSERVER
 #define INCLUDE_TOOLS_NOTIFIER_AND_OBSERVER
 
+#include "boost_serialize_define.h"
 #include <boost/serialization/string.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -26,16 +27,6 @@ namespace Observer_ZZY
 using Subject_t = std::uint32_t;
 using Content_t = std::string;
 using CallbackHandler = std::uint32_t;
-using InputWrapper = boost::archive::text_iarchive;
-using OutputWrapper = boost::archive::text_oarchive;
-
-#define DEFINE_MESSAGE_INPUT_WRAPPER(message) \
-    std::stringstream is(message); \
-    Observer_ZZY::InputWrapper message##In(is)
-
-#define DEFINE_MESSAGE_OUTPUT_WRAPPER(message) \
-    std::stringstream message; \
-    Observer_ZZY::OutputWrapper message##Out(message)
 
 /**
  * @brief 主题：用于发布主题对应信息

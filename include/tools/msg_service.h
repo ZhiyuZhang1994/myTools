@@ -5,6 +5,7 @@
  */
 
 #include "safe_queue.h"
+#include "boost_serialize_define.h"
 #include "tools/hash_func.h"
 #include <boost/serialization/string.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -20,15 +21,7 @@
 #include <iostream>
 
 using Content_t = std::string;
-using InputWrapper = boost::archive::text_iarchive;
-using OutputWrapper = boost::archive::text_oarchive;
 
-#define DEFINE_MESSAGE_INPUT_WRAPPER(message) \
-    std::stringstream is(message); \
-    InputWrapper message##In(is)
-#define DEFINE_MESSAGE_OUTPUT_WRAPPER(message) \
-    std::stringstream message; \
-    OutputWrapper message##Out(message)
 class MsgService {
 public:
     explicit MsgService(std::string serviceName);
