@@ -6,9 +6,9 @@
 
 #include "tools/msg_service.h"
 
-MessageService::MessageService(std::string serviceName) : serviceName_(serviceName) {}
+MsgService::MsgService(std::string serviceName) : serviceName_(serviceName) {}
 
-void MessageService::init() {
+void MsgService::init() {
     if (running_) {
         std::cout << "already started!" << std::endl;
         return;
@@ -34,7 +34,7 @@ void MessageService::init() {
     });
 }
 
-void MessageService::stop() {
+void MsgService::stop() {
     running_ = false;
     cv.notify_one();
     if (thread_.joinable()) {
@@ -42,7 +42,7 @@ void MessageService::stop() {
     }
 }
 
-void MessageService::send_msg(Content_t message) {
+void MsgService::send_msg(Content_t message) {
     queue_.enqueue(message);
     cv.notify_one();
 }

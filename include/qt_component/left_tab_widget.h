@@ -21,6 +21,7 @@ public:
         s.transpose();
         return s;
     }
+
 protected:
     void paintEvent(QPaintEvent * /*event*/){
         QStylePainter painter(this);

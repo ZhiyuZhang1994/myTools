@@ -11,9 +11,12 @@
 #include <utility>
 #include <iostream>
 
-class process_status_bar_msg : public MessageService {
+const std::string statusBarMsgService = "status.bar.msg.service";
+const ServiceID_t statusBarMsgServiceID = GENERATE_SERVICE_ID(statusBarMsgService);
+
+class process_status_bar_msg : public MsgService {
 public:
-    explicit process_status_bar_msg(std::string serviceName) : MessageService(serviceName) {}
+    explicit process_status_bar_msg(std::string serviceName) : MsgService(serviceName) {}
     virtual void process_msg(Content_t) override;
 
 private:
@@ -41,13 +44,16 @@ void process_status_bar_msg::process_output_msg(InputWrapper& messageIn) {
 }
 
 int main() {
-    process_status_bar_msg service("abc");
-    service.init();
+    // process_status_bar_msg service("abc");
+    MESSAGE_SERVICE_REGISTER(process_status_bar_msg, statusBarMsgServiceID, statusBarMsgService);
+    auto service = MsgServiceRepo::instance().getServicePtr(statusBarMsgServiceID);
+    service->init();
+    // service.init();
     int d1 = 1;
     int d2 = 1000;
     DEFINE_MESSAGE_OUTPUT_WRAPPER(message);
     messageOut << d1 << d2;//序列化到一个ostringstream里面
-    service.send_msg(message.str());
+    service->send_msg(message.str());
 
     getchar();
     return 0;

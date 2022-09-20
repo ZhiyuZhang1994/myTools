@@ -5,6 +5,7 @@
  */
 
 #include "safe_queue.h"
+#include "tools/hash_func.h"
 #include <boost/serialization/string.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -28,11 +29,11 @@ using OutputWrapper = boost::archive::text_oarchive;
 #define DEFINE_MESSAGE_OUTPUT_WRAPPER(message) \
     std::stringstream message; \
     OutputWrapper message##Out(message)
-class MessageService {
+class MsgService {
 public:
-    explicit MessageService(std::string serviceName);
+    explicit MsgService(std::string serviceName);
 
-    ~MessageService() {
+    ~MsgService() {
         stop();
     }
 
@@ -58,6 +59,45 @@ protected:
     std::mutex mtx;
     std::condition_variable cv;
 
-    MessageService(const MessageService&) = delete;
-    MessageService& operator=(const MessageService&) = delete;
+    MsgService(const MsgService&) = delete;
+    MsgService& operator=(const MsgService&) = delete;
 };
+
+using ServiceID_t = std::uint32_t;
+
+// 消息服务仓库：存储所有消息服务
+class MsgServiceRepo {
+public:
+
+public:
+    static MsgServiceRepo& instance() {
+        static MsgServiceRepo repo;
+        return repo;
+    }
+
+    // 注册类
+    void sign(ServiceID_t serviceId, std::shared_ptr<MsgService> servicePtr) {
+        std::unique_lock<std::mutex> lock(servicesPtrMutex_);
+        if (servicesPtrContainer.find(serviceId) == servicesPtrContainer.end()) {
+            servicesPtrContainer[serviceId] = servicePtr;
+        }
+    }
+
+    std::shared_ptr<MsgService> getServicePtr(ServiceID_t serviceId) {
+        std::unique_lock<std::mutex> lock(servicesPtrMutex_);
+        auto iter = servicesPtrContainer.find(serviceId);
+        return (iter == servicesPtrContainer.end()) ? nullptr : iter->second;
+    }
+
+private:
+    MsgServiceRepo() = default;
+
+private:
+    std::unordered_map<ServiceID_t, std::shared_ptr<MsgService>> servicesPtrContainer;
+    std::mutex servicesPtrMutex_;
+};
+
+// 类自注册宏
+#define MESSAGE_SERVICE_REGISTER(class_name, serviceId, ...)                                   \
+    std::shared_ptr<class_name> servicePtr = std::make_shared<class_name>(__VA_ARGS__);        \
+    MsgServiceRepo::instance().sign(serviceId, servicePtr)

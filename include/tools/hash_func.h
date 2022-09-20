@@ -6,6 +6,7 @@
 #define INCLUDE_TOOLS_HASH_FUNC_H
 
 #include <string>
+#include <functional>
 
 class Hash {
 public:
@@ -23,6 +24,7 @@ public:
     }
 };
 
-#define GENERATE_SUBJECT_CODE(subjectName) Hash::BKDRHash(subjectName);
+#define GENERATE_SUBJECT_CODE(subjectName) Hash::BKDRHash(subjectName)
+#define GENERATE_SERVICE_ID(service) std::hash<std::string>()(service)
 
 #endif
