@@ -12,7 +12,7 @@ add_library(xx SHARED $<TARGET_OBJECTS:ax>)
 
 # 生成可执行文件
 # add_executable(Tutorial_Step1 MACOSX_BUNDLE ./box_selection_cells/highligth_cells_add_fieiddata.cpp )
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ../src/tools/test_bit.cpp)
+add_executable(Tutorial_Step1 MACOSX_BUNDLE ../src/vtk/show_arrow_lius.cpp)
 
 # 添加链接库
 target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES} ${Boost_SERIALIZATION_LIBRARY_RELEASE})
