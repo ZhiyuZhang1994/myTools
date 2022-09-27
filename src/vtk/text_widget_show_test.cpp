@@ -31,6 +31,37 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkWidgetCallbackMapper.h>
+#include <vtkHandleWidget.h>
+
+
+// anchor点(箭头指向点)固定的captionWidget
+class vtkFixPointCaptionWidget : public vtkCaptionWidget {
+public:
+    static vtkFixPointCaptionWidget* New();
+
+    vtkTypeMacro(vtkFixPointCaptionWidget, vtkCaptionWidget);
+
+    void PrintSelf(ostream& os, vtkIndent indent) override;
+
+    void SetEnabled(int enabling) override;
+
+};
+
+vtkStandardNewMacro(vtkFixPointCaptionWidget);
+
+void vtkFixPointCaptionWidget::SetEnabled(int enabling)
+{
+    this->Superclass::SetEnabled(enabling);
+    this->HandleWidget->SetEnabled(false);
+}
+
+void vtkFixPointCaptionWidget::PrintSelf(ostream& os, vtkIndent indent)
+{
+    this->Superclass::PrintSelf(os, indent);
+    os << indent << "HandleWidget PrintSelf: " << "\n";
+    this->HandleWidget->PrintSelf(os, indent);
+}
+
 
 int main()
 {
@@ -78,27 +109,24 @@ int main()
     textWidget->SetInteractor(interactor);
     textWidget->SetTextActor(textActor);
     textWidget->SelectableOff();
-	textWidget->On();
+    textWidget->SetEnabled(true);
 
     ////////////////////////////////////////////////////////////////////////////
     // // vtkCaptionWidget
-    // vtkSmartPointer<vtkCaptionRepresentation> captionRepresentation = 
-    // 	vtkSmartPointer<vtkCaptionRepresentation>::New();
-    // captionRepresentation->GetCaptionActor2D()->SetCaption("Caption Widget");
-    // captionRepresentation->GetCaptionActor2D()->GetTextActor()->GetTextProperty()->SetFontSize(20);
+    vtkSmartPointer<vtkCaptionRepresentation> captionRepresentation = vtkSmartPointer<vtkCaptionRepresentation>::New();
+    captionRepresentation->GetCaptionActor2D()->SetCaption("Caption Widget");
+    captionRepresentation->GetCaptionActor2D()->GetTextActor()->GetTextProperty()->SetFontSize(20);
 
-    // double pos[3] = {.5,0,0};
-    // captionRepresentation->SetAnchorPosition(pos);
+    double pos[3] = {1,0.2,0};
+    captionRepresentation->SetAnchorPosition(pos);
 
-    // vtkSmartPointer<vtkCaptionWidget> captionWidget = 
-    // 	vtkSmartPointer<vtkCaptionWidget>::New();
-    // captionWidget->SetInteractor(interactor);
-    // captionWidget->SetRepresentation(captionRepresentation);
-    // captionWidget->On();
+    vtkSmartPointer<vtkFixPointCaptionWidget> captionWidget = vtkSmartPointer<vtkFixPointCaptionWidget>::New();
+    captionWidget->SetInteractor(interactor);
+    captionWidget->SetRepresentation(captionRepresentation);
 
     renderWindow->Render();
-    interactor->Initialize();
-    interactor->Start();
 
+    captionWidget->SetEnabled(true);
+    interactor->Start();
     return 0;
 }
