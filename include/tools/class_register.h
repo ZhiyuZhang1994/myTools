@@ -7,6 +7,7 @@
 
 #include "tools/Singleton.h"
 #include "tools/construct_define.h"
+#include "tools/gui_common_define.h"
 #include <unordered_map>
 #include <memory>
 #include <mutex>
@@ -18,7 +19,7 @@ class base_class
 {
 public:
     base_class() = default;
-    virtual void initialize() = 0;
+    virtual void init(InitStage stage) {};
 };
 
 using class_reg_func = std::shared_ptr<base_class>(*)();
@@ -41,27 +42,28 @@ public:
     }
 
     // 构造各类并初始化
-    void active() {
-        if (activated_) {
-            std::cout << "all the services are activated!" << std::endl;
-            return;
-        }
-        std::unique_lock<std::mutex> lock(class_reg_func_mutex_);
-        for (auto &each : class_reg_func_container) {
-            std::shared_ptr<base_class> class_ptr = each.second();
-            {
-                std::unique_lock<std::mutex> lock(class_ptr_mutex_);
-                class_ptr_container[each.first] = class_ptr;
+    void init(InitStage stage) {
+        if (stage == InitStage::INIT_SELF) {
+            if (activated_) {
+                std::cout << "all the services are activated!" << std::endl;
+                return;
             }
+            std::unique_lock<std::mutex> lock(class_reg_func_mutex_);
+            for (auto &each : class_reg_func_container) {
+                std::shared_ptr<base_class> class_ptr = each.second();
+                {
+                    std::unique_lock<std::mutex> lock(class_ptr_mutex_);
+                    class_ptr_container[each.first] = class_ptr;
+                }
+            }
+            activated_ = true;
         }
-
         {
             std::unique_lock<std::mutex> lock(class_ptr_mutex_);
             for (auto &each : class_ptr_container) {
-                each.second->initialize();
+                each.second->init(stage);
             }
         }
-        activated_ = true;
     }
 
     std::shared_ptr<base_class> get_class_ptr(class_id_t class_id) {
@@ -86,7 +88,7 @@ private:
 class class_register
 {
 public:
-    class_register(uint16_t class_id, class_reg_func reg_func)
+    class_register(class_id_t class_id, class_reg_func reg_func)
     {
         class_repository::get_instance()->sign(class_id, reg_func);
     }
@@ -106,7 +108,7 @@ public:
 #define DECLARE_CLASS_PTR_TYPE(class_name) \
     using class_name##Ptr = std::shared_ptr<class_name>
 
-#define GET_CLASS_PTR(class_name) \
-    std::dynamic_pointer_cast<class_name>(class_repository::get_instance()->get_class_ptr(class_name##_ID));
+#define GET_CLASS_PTR(class_name, class_id) \
+    std::dynamic_pointer_cast<class_name>(class_repository::get_instance()->get_class_ptr(class_id))
 
 #endif

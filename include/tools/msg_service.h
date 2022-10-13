@@ -94,3 +94,6 @@ private:
 #define MESSAGE_SERVICE_REGISTER(class_name, serviceId, ...)                                   \
     std::shared_ptr<class_name> servicePtr = std::make_shared<class_name>(__VA_ARGS__);        \
     MsgServiceRepo::instance().sign(serviceId, servicePtr)
+
+#define GET_MESSAGE_SERVICE_PTR(class_name, serviceId) \
+    std::dynamic_pointer_cast<class_name>(MsgServiceRepo::instance().getServicePtr(serviceId))

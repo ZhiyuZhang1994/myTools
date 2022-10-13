@@ -21,10 +21,10 @@ using OutputWrapper = boost::archive::text_oarchive;
 
 #define DEFINE_MESSAGE_INPUT_WRAPPER(message) \
     std::stringstream is(message); \
-    BefemLib::InputWrapper message##In(is)
+    InputWrapper message##In(is)
 
 #define DEFINE_MESSAGE_OUTPUT_WRAPPER(message) \
     std::stringstream message; \
-    BefemLib::OutputWrapper message##Out(message)
+    OutputWrapper message##Out(message)
 
 #endif

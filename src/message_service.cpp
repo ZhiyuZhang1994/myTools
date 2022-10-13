@@ -46,7 +46,7 @@ void process_status_bar_msg::process_output_msg(InputWrapper& messageIn) {
 int main() {
     // process_status_bar_msg service("abc");
     MESSAGE_SERVICE_REGISTER(process_status_bar_msg, statusBarMsgServiceID, statusBarMsgService);
-    auto service = MsgServiceRepo::instance().getServicePtr(statusBarMsgServiceID);
+    auto service = GET_MESSAGE_SERVICE_PTR(process_status_bar_msg, statusBarMsgServiceID);
     service->init();
     // service.init();
     int d1 = 1;
