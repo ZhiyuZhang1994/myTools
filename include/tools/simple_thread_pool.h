@@ -1,3 +1,11 @@
+/**
+ * @brief 1. 线程池由多个线程组成，但是所有线程共享一个线程安全的消息队列
+ * @brief 2. 消息队列没有优先级
+ * @author https://wangpengcheng.github.io/2019/05/17/cplusplus_theadpool/
+ * @author https://blog.csdn.net/caoshangpa/article/details/80374651
+ * @date 2022/08/18
+ */
+
 #ifndef BEFEMLIB_THREAD_POOL_H
 #define BEFEMLIB_THREAD_POOL_H
 
@@ -13,13 +21,6 @@
 #include <utility>
 #include <vector>
 
-
-/**
- * 1. 线程池由多个线程组成，但是所有线程共享一个线程安全的消息队列
- * 2. 消息队列没有优先级
- * @brief C++11简单的线程池实现
- * @author Nemo
- */
 class ThreadPool : protected NonCopyable {
 private:
     class ThreadWorker {
@@ -56,8 +57,8 @@ private:
     };
 
 public:
-    explicit ThreadPool(const std::uint32_t size = 4)
-        : shutdown_(false), threads_(std::vector<std::thread>(size)) {
+    explicit ThreadPool(std::string name, const std::uint32_t size = 1)
+        : shutdown_(false), threads_(std::vector<std::thread>(size)), name_(std::move(name)) {
         for (std::size_t i = 0; i < threads_.size(); ++i) {
             threads_.at(i) = std::thread(ThreadWorker(this, i));
         }
@@ -72,7 +73,7 @@ public:
      * @brief 等待所有正在执行任务结束，然后关闭线程池
      */
     void shutdown() {
-        SPDLOG_DEBUG("thread pool shutdown");
+        std::cout <<< "thread pool " << name_ << " shutdown" << std::endl;
         shutdown_ = true;
         cvPool_.notify_all();
 
@@ -110,7 +111,7 @@ public:
      * @return
      */
     static ThreadPool &instance() {
-        static ThreadPool pool_(std::thread::hardware_concurrency());
+        static ThreadPool pool_("main", 4);
         return pool_;
     }
 
@@ -125,6 +126,7 @@ private:
     std::mutex mutQueue_;
     // 线程环境锁
     std::condition_variable cvPool_;
+    std::string name_;
 };
 
 #endif //BEFEMLIB_THREAD_POOL_H

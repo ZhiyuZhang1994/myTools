@@ -1,14 +1,15 @@
-#ifndef BEFEMLIB_SAFE_QUEUE_H
-#define BEFEMLIB_SAFE_QUEUE_H
-
-#include <mutex>
-#include <queue>
-
 /**
  * @brief 线程安全的消息队列
  * @tparam T 队列数据类型
- * @author Nemo
+ * @author https://wangpengcheng.github.io/2019/05/17/cplusplus_theadpool/
  */
+
+#ifndef SAFE_QUEUE_H
+#define SAFE_QUEUE_H
+
+#include <shared_mutex>
+#include <queue>
+
 template<typename T>
 class SafeQueue {
 public:
@@ -22,8 +23,7 @@ public:
      * @return
      */
     bool empty() {
-        std::unique_lock<std::mutex> lock(mutex_);
-
+        std::shared_lock<std::shared_mutex> lock(mutex_);
         return queue_.empty();
     }
 
@@ -32,18 +32,26 @@ public:
      * @return
      */
     int size() {
-        std::unique_lock<std::mutex> lock(mutex_);
-
+        std::shared_lock<std::shared_mutex> lock(mutex_);
         return queue_.size();
     }
 
     /**
-     * @brief 入队
+     * @brief 入队(引用)
      * @param t
      */
     void enqueue(T &t) {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::shared_mutex> lock(mutex_);
         queue_.emplace(t);
+    }
+
+    /**
+     * @brief 入队(右值)
+     * @param t
+     */
+    void enqueue(T &&t) {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
+        queue_.emplace(std::move(t));
     }
 
     /**
@@ -52,10 +60,11 @@ public:
      * @return
      */
     bool dequeue(T &t) {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::shared_mutex> lock(mutex_);
 
-        if (queue_.empty())
+        if (queue_.empty()) {
             return false;
+        }
         t = std::move(queue_.front());
 
         queue_.pop();
@@ -65,7 +74,7 @@ public:
 
 private:
     std::queue<T> queue_;
-    std::mutex mutex_;
+    std::shared_mutex mutex_;
 };
 
-#endif // BEFEMLIB_SAFE_QUEUE_H
+#endif // SAFE_QUEUE_H
