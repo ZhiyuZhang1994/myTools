@@ -92,6 +92,8 @@
     "iomanip": "cpp",
     "future": "cpp",
     "set": "cpp",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "shared_mutex": "cpp",
+    "cstring": "cpp"
 }
 }

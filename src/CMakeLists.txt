@@ -11,8 +11,11 @@ aux_source_directory(. source_list)
 add_library(xx SHARED $<TARGET_OBJECTS:ax>)
 
 # 生成可执行文件
-# add_executable(Tutorial_Step1 MACOSX_BUNDLE ./box_selection_cells/highligth_cells_add_fieiddata.cpp )
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ./message_service.cpp)
+# VTK 可执行文件
+add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/axis_and_coord/axis_test.cpp)
+
+# add_executable(Tutorial_Step1 MACOSX_BUNDLE ./func_test_case.cpp)
+
 
 # 添加链接库
 target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES} ${Boost_SERIALIZATION_LIBRARY_RELEASE})

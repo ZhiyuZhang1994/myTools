@@ -19,7 +19,7 @@ int main(int, char*[])
 
   vtkNew<vtkSphereSource> sphereSource;
   sphereSource->SetCenter(0.0, 0.0, 0.0);
-  sphereSource->SetRadius(0.5);
+  sphereSource->SetRadius(1);
 
   // create a mapper
   vtkNew<vtkPolyDataMapper> sphereMapper;
@@ -41,39 +41,30 @@ int main(int, char*[])
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
   // add the actors to the scene
-  renderer->AddActor(sphereActor);
+//   renderer->AddActor(sphereActor);
   renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
-
-  vtkNew<vtkTransform> transform;
-  transform->Translate(1.0, 0.0, 0.0);
-//   transform->RotateZ(40);
-  transform->RotateX(40);
-
   vtkNew<vtkAxesActor> axes;
   vtkNew<vtkAxesActor> axes1;
 
-  // The axes are positioned with a user transform
-  axes->SetUserTransform(transform);
-
-  // properties of the axes labels can be set as follows
-  // this sets the x axis label to red
-  // axes->GetXAxisCaptionActor2D()->GetCaptionTextProperty()->SetColor(
-  //   colors->GetColor3d("Red").GetData());
-
-  // the actual text of the axis label can be changed:
-  // axes->SetXAxisLabelText("test");
-
+//   vtkNew<vtkTransform> transform;
+//   transform->Translate(1.0, 0.0, 0.0);
+//   transform->RotateX(40);
+//   axes->SetUserTransform(transform);
+  axes->SetScale(2);
+  axes->SetTotalLength(0.1,0.1,0.1);
   renderer->AddActor(axes);
   renderer->AddActor(axes1);
-
-//   renderer->GetActiveCamera()->Azimuth(50);
-//   renderer->GetActiveCamera()->Elevation(-30);
 
   renderer->ResetCamera();
   renderWindow->SetWindowName("Axes");
   renderWindow->Render();
+  
+  std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!origin!!!!!!!!!!!!!!!!!!!" << std::endl;
+  axes1->PrintSelf(std::cout,vtkIndent(2));
 
-  // begin mouse interaction
+  std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!moved!!!!!!!!!!!!!!!!!!!" << std::endl;
+  axes->PrintSelf(std::cout,vtkIndent(2));
+
   renderWindowInteractor->Start();
 
   return EXIT_SUCCESS;

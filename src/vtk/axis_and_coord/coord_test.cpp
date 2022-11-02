@@ -17,34 +17,6 @@
 #include <vtkCamera.h>
 #include <iostream>
 #include <cmath>
-// For compatibility with new VTK generic data arrays
-#ifdef vtkGenericDataArray_h
-#define InsertNextTupleValue InsertNextTypedTuple
-#endif
-
-class Coord
-{
-public:
-    Coord() = default;
-    Coord(double x, double y, double z) : x(x), y(y), z(z) {}
-    Coord(double arr[3]) : x(arr[0]), y(arr[1]), z(arr[2]) {}
-    Coord(const Coord &point) = default;
-
-public:
-    double x{0};
-    double y{0};
-    double z{0};
-};
-
-// 计算三点成面的法向量
-Coord Cal_Normal_3D(const Coord &v1, const Coord &v2, const Coord &v3)
-{
-    double na = (v2.y - v1.y) * (v3.z - v1.z) - (v2.z - v1.z) * (v3.y - v1.y);
-    double nb = (v2.z - v1.z) * (v3.x - v1.x) - (v2.x - v1.x) * (v3.z - v1.z);
-    double nc = (v2.x - v1.x) * (v3.y - v1.y) - (v2.y - v1.y) * (v3.x - v1.x);
-
-    return Coord(na, nb, nc);
-}
 
 int main(int, char *[])
 {
@@ -140,12 +112,22 @@ int main(int, char *[])
 
     // zzy
 
+    // 
+    vtkNew<vtkAxesActor> axes1;
+    renderer->AddActor(axes1);
+
     vtkNew<vtkAxesActor> axes;
     renderer->AddActor(axes);
     vtkNew<vtkTransform> transform;
-    transform->Translate(-1.0, -1.0, 0.0);
+
+    // 2、指定第一个点
+    transform->Translate(-1.0, -1.0, 3.0);
     // The axes are positioned with a user transform
     axes->SetUserTransform(transform);
+    renderer->ResetCamera();
+    
+    // 2、数学旋转
+
     vtkCamera *activeCamera = renderer->GetActiveCamera();
     activeCamera->SetPosition(0, 0, 0);
     activeCamera->SetFocalPoint(-1.0, -1.0, 0);

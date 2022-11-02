@@ -9,6 +9,8 @@
 
 #include <shared_mutex>
 #include <queue>
+#include <memory>
+#include <mutex>
 
 template<typename T>
 class SafeQueue {
