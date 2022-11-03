@@ -15,54 +15,21 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
-void signal_callback(int x) {
-    std::cout << "signal test" << std::endl;
+
+template<typename T>
+void func2(std::vector<T>* abc) {
+    std::cout << "func2" << std::endl;
 }
 
-class A {
-public:
-    void func() {
-        std::cout << "A::func" << std::endl;
-    }
-    void func2() {
-        std::cout << "A::func2" << std::endl;
-    }
-
-private:
-    int a_ = 0;
-};
-
-#define ERR_T std::uint32_t
-
-#define FEM_ERROR_SUCCESS 0;
+template<typename T>
+void func1(std::vector<T>* abc) {
+    func2(abc);
+}
 
 int main()
 {
-    ERR_T abc = 1;
-    if (abc == FEM_ERROR_SUCCESS) {
-        std::cout << "FEM_ERROR_SUCCESS" << std::endl;
-    }
-
-    double f1 = std::nan("NaN");
-    std::array<double, 6> value_{f1};
-    value_.fill(f1);
-    double x = f1 * f1 + 1;
-    double y = f1/2;
-
-    std::cout << "f1: " << f1 << " x: " << x << " y: " << y << std::endl;
-
-
-    std::cout << "SSSSSSSSSSSSSSSSSSSSSSSSSSS" << std::endl;
-
-
-
-    signal(SIGSEGV, signal_callback);
-    std::vector<int> arr{1, 2, 3};
-    std::cout << arr[0] << std::endl;
-    A* a = nullptr;
-    a->func();
-    int *b;
-    *b = 2;
+    std::vector<int> abc{1,2,3};
+    func1(&abc);
     getchar();
     return 0;
 }
