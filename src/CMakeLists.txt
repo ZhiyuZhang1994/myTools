@@ -12,7 +12,7 @@ add_library(xx SHARED $<TARGET_OBJECTS:ax>)
 
 # 生成可执行文件
 # VTK 可执行文件
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/axis_and_coord/axis_test.cpp)
+add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/composed_actor/compose_two_cone.cpp)
 
 # add_executable(Tutorial_Step1 MACOSX_BUNDLE ./func_test_case.cpp)
 
