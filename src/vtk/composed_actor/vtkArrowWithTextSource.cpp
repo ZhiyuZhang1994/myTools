@@ -72,7 +72,7 @@ int vtkArrowWithTextSource::RequestData(vtkInformation* vtkNotUsed(request),
     // 拿到输出数据信息对象
     vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-    arrow->SetInvert(true); // 箭头翻转，指向远点
+    arrow->SetInvert(true); // 箭头翻转，指向原点
     arrow->Update(); // 更新箭头
     vecText->Update(); // 更新文本
 
@@ -109,7 +109,7 @@ void vtkArrowWithTextSource::PrintSelf(ostream& os, vtkIndent indent) {
 int main() {
     // 创建箭头带文本对象
     vtkSmartPointer<vtkArrowWithTextSource> arrowWithText = vtkSmartPointer<vtkArrowWithTextSource>::New();
-    arrowWithText->SetText("Welcome to\r\n my blog!"); // 设置文本内容
+    arrowWithText->SetText("Welcome to\n my blog!"); // 设置文本内容
     arrowWithText->Update(); // 更新对象
 
     vtkNew<vtkPolyDataMapper> mapper;
