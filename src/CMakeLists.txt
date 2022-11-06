@@ -12,9 +12,9 @@ add_library(xx SHARED $<TARGET_OBJECTS:ax>)
 
 # 生成可执行文件
 # VTK 可执行文件
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/composed_actor/vtkArrowWithCone.cpp)
+# add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/composed_actor/vtkArrowWithCone.cpp)
 
-# add_executable(Tutorial_Step1 MACOSX_BUNDLE ./func_test_case.cpp)
+add_executable(Tutorial_Step1 MACOSX_BUNDLE ./signal_test_case.cpp)
 
 
 # 添加链接库
