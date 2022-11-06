@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(Tutorial_Step1)
 
-find_package(VTK COMPONENTS 
+find_package(VTK COMPONENTS
 CommonColor
 CommonCore
 CommonDataModel
@@ -31,8 +31,6 @@ if (NOT VTK_FOUND)
   message(FATAL_ERROR "Tutorial_Step1: Unable to find the VTK build folder.")
 endif()
 
-
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_STANDARD 17)
@@ -45,7 +43,7 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS}-g -std=c++11")
 
 # include_directories(${Boost_INCLUDE_DIRS})
 
-# add_subdirectory(third_party)
+add_subdirectory(third_party)
 add_subdirectory(src)
 
 add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)

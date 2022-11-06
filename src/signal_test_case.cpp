@@ -12,6 +12,9 @@
 #include <cstdint>
 #include <cstring>
 #include <vector>
+#include "easylogging/easylogging++.h"
+
+#define ELPP_FEATURE_CRASH_LOG
 
 void signal_callback(int x) {
     std::cout << "signal test" << std::endl;
@@ -32,6 +35,7 @@ private:
 
 int main()
 {
+    LOG(INFO) << "My first info log using default logger";
     std::cout << "SSSSSSSSSSSSSSSSSSSSSSSSSSS" << std::endl;
 
     signal(SIGSEGV, signal_callback);
