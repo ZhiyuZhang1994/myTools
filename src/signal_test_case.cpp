@@ -18,32 +18,17 @@
 
 void signal_callback(int x) {
     std::cout << "signal test" << std::endl;
+    signal(SIGSEGV, nullptr);
 }
-
-class A {
-public:
-    void func() {
-        std::cout << "A::func" << std::endl;
-    }
-    void func2() {
-        std::cout << "A::func2" << std::endl;
-    }
-
-private:
-    int a_ = 0;
-};
 
 int main()
 {
     LOG(INFO) << "My first info log using default logger";
     std::cout << "SSSSSSSSSSSSSSSSSSSSSSSSSSS" << std::endl;
 
-    signal(SIGSEGV, signal_callback);
-    std::vector<int> arr{1, 2, 3};
-    std::cout << arr[0] << std::endl;
-    A* a = nullptr;
-    a->func();
-    int *b;
+    // signal(SIGSEGV, signal_callback);
+
+    int *b = nullptr;
     *b = 2;
     getchar();
     return 0;

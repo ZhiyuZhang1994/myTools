@@ -14,6 +14,12 @@
 #include <vtkArrowSource.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkNamedColors.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkAxesActor.h>
 
 class vtkArrowWithCone : public vtkPolyDataAlgorithm {
 public:

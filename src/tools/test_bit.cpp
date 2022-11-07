@@ -14,12 +14,12 @@ static inline bool testBit(Type target, uint32_t pos) {
     return target & (1 << (pos - 1));
 }
 
-int main() {
-    int temp = 0b0010111010110;
-    int pos = 8;
+// int main() {
+//     int temp = 0b0010111010110;
+//     int pos = 8;
 
-    bool y = testBit(temp, pos);
-    std::cout << y << std::endl;
-    getchar();
-    return 1;
-}
+//     bool y = testBit(temp, pos);
+//     std::cout << y << std::endl;
+//     getchar();
+//     return 1;
+// }
