@@ -38,7 +38,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin/)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 find_package(Boost 1.67 COMPONENTS serialization REQUIRED)
-set(CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS}-g -std=c++11 -fPIC") 
+set(CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS} -g -std=c++11 -fPIC")
 
 # include_directories(${Boost_INCLUDE_DIRS})
 
@@ -51,4 +51,3 @@ add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
 
 # Prevent a "command line is too long" failure in Windows.
 set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
-

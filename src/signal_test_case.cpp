@@ -12,24 +12,42 @@
 #include <cstdint>
 #include <cstring>
 #include <vector>
-#include "easylogging/easylogging++.h"
+#include <iostream>
+#include <execinfo.h>
 
-#define ELPP_FEATURE_CRASH_LOG
-
-void signal_callback(int x) {
-    std::cout << "signal test" << std::endl;
-    signal(SIGSEGV, nullptr);
+void printCallStack()
+{
+    int size = 16;                                 // 最多打印16层调用栈
+    void *buffer[size] = {nullptr};                // 用于存放调用栈信息
+    int count = backtrace(buffer, size);           // 获取调用栈
+    char **ptr = backtrace_symbols(buffer, count); // 将调用栈信息转成字符串
+    for (int i = 0; i < count; i++)
+    { // 打印字符串
+        std::cout << ptr[i] << std::endl;
+    }
+    free(ptr); // 释放分配的内存
 }
+
+void signal_callback(int x)
+{
+    std::cout << "signal: " << x << std::endl;
+    printCallStack();
+}
+
+void test3(int n)
+{
+    int *b = nullptr;
+    *b = 2;
+}
+void test2(int n) { test3(3); }
+void test1(int n) { test2(2); }
 
 int main()
 {
-    LOG(INFO) << "My first info log using default logger";
     std::cout << "SSSSSSSSSSSSSSSSSSSSSSSSSSS" << std::endl;
+    signal(SIGSEGV, signal_callback);
+    test1(1);
 
-    // signal(SIGSEGV, signal_callback);
-
-    int *b = nullptr;
-    *b = 2;
     getchar();
     return 0;
 }

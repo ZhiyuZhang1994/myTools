@@ -15,21 +15,17 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
-
-template<typename T>
-void func2(std::vector<T>* abc) {
-    std::cout << "func2" << std::endl;
-}
-
-template<typename T>
-void func1(std::vector<T>* abc) {
-    func2(abc);
-}
+#include <algorithm>
+#include <string>
 
 int main()
 {
-    std::vector<int> abc{1,2,3};
-    func1(&abc);
+    std::vector<std::string> v{"111","222", "333", "444", "555", "666", "777"};
+
+    std::string x = "555";
+    std::cout << *find_if(v.begin(), v.end(), [x](std::string& tmp)->bool { return (tmp == x)··; };) << std::endl;
+
+
     getchar();
     return 0;
 }
