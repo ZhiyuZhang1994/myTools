@@ -76,3 +76,6 @@ int main()
     getchar();
 	return 0;
 }
+
+// 参考资料：https://blog.csdn.net/qq_41841073/article/details/127022216
+// 表明：右值参数在函数中传递时仍需调用std::move()，不调的话，在往下层传递时作为左值传递
