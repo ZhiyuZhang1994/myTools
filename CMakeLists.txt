@@ -16,7 +16,7 @@ RenderingCore
 RenderingFreeType
 RenderingGL2PSOpenGL2
 RenderingOpenGL2
-
+IOImage
 GUISupportQt
 RenderingQt
 RenderingAnnotation
