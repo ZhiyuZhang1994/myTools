@@ -14,7 +14,7 @@ add_library(tools SHARED $<TARGET_OBJECTS:tool>)
 
 # 生成可执行文件
 # VTK 可执行文件
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/add_field_data.cpp)
+add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/change_layer/set_actor_layer_by_renderer.cpp)
 
 # add_executable(Tutorial_Step1 MACOSX_BUNDLE ./temp_test.cpp)
 
