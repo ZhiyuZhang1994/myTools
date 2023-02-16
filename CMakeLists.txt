@@ -5,6 +5,7 @@ find_package(VTK COMPONENTS
 CommonColor
 CommonCore
 CommonDataModel
+FiltersPoints
 FiltersCore
 FiltersExtraction
 FiltersGeneral
@@ -26,6 +27,7 @@ IOLegacy
 IOPLY
 IOXML
 )
+
 
 if (NOT VTK_FOUND)
   message(FATAL_ERROR "Tutorial_Step1: Unable to find the VTK build folder.")
