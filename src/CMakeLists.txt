@@ -17,6 +17,7 @@ add_library(tools SHARED $<TARGET_OBJECTS:tool>)
 # add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/change_layer/set_actor_layer_by_renderer.cpp)
 
 add_executable(Tutorial_Step1 MACOSX_BUNDLE ./temp_test.cpp)
+TARGET_COMPILE_OPTIONS(Tutorial_Step1 PRIVATE -W -Wall -Wno-unused-value -Wno-unused-parameter)
 
 
 # 添加链接库
