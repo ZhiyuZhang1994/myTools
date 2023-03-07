@@ -1,18 +1,11 @@
 /**
- * @brief vtkDataSetSurfaceFilter测试
+ * @brief vtkCutter测试
  * @author zhangzhiyu
  * @date 2023-01-05
  */
 
 /**
- * 总结：
- * vtkDataSetSurfaceFilter将三维网格cell的每个面单独抽取为一个二位网格cell
- * 如以下算例：两个六面体单元(一个单元8节点6个面)抽取后形成12个平面单元(一个单元4个节点1个面)
- * tip: 两单元相挨着的两个面不会合并，会抽取为两个平面单元
- */
-
-/**
- * @brief 此例子展示了cutter(切面功能)，特征面(三维单元抽取二维面单元)
+ * @brief 此例子展示了cutter(切面功能)
  */
 
 #include <vtkActor.h>
