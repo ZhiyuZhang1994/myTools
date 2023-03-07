@@ -11,6 +11,10 @@
  * tip: 两单元相挨着的两个面不会合并，会抽取为两个平面单元
  */
 
+/**
+ * @brief 此例子展示了cutter(切面功能)，特征面(三维单元抽取二维面单元)
+ */
+
 #include <vtkActor.h>
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
