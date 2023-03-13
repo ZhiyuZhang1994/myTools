@@ -26,6 +26,10 @@ IOGeometry
 IOLegacy
 IOPLY
 IOXML
+CommonComputationalGeometry
+CommonMath
+CommonTransforms
+ImagingSources
 )
 
 

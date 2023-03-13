@@ -98,6 +98,7 @@
     "bitset": "cpp",
     "codecvt": "cpp",
     "csignal": "cpp",
-    "list": "cpp"
+    "list": "cpp",
+    "numeric": "cpp"
 }
 }
