@@ -12,10 +12,10 @@
                 "'-std=c++17'",  //使用c++17标准编译
 				"'-I ${workspaceFolder}\\include\\tools'",  // 指定包含头文件路径
 				"-g",  // 添加gdb调试信息
-				"'${workspaceFolder}\\source\\tools\\*'",  // 指定编译CPP路径
-                "main.cpp", //当前文件名
+				// "'${workspaceFolder}\\source\\tools\\*'",  // 指定编译CPP路径：多文件项目需要
+                "src\\temp_test.cpp", //当前文件名
                 "-o", //对象名，不进行编译优化
-				"'${workspaceFolder}\\bin\\test.exe'"
+				"'${workspaceFolder}\\build\\bin\\test.exe'"
 			],
 			// 所以以上部分，就是在shell中执行（假设文件名为filename.cpp）g++ -g filename.cpp -o bin/filename.exe
 			"options": {
