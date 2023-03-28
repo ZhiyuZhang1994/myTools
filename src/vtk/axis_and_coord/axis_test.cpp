@@ -12,31 +12,7 @@
 #include <vtkSphereSource.h>
 #include <vtkTextProperty.h>
 #include <vtkTransform.h>
-
-
-namespace {
-// Define interaction style
-class myVtkAxesActor : public vtkAxesActor
-{
-public:
-  static myVtkAxesActor* New();
-  vtkTypeMacro(myVtkAxesActor, vtkAxesActor);
-  int RenderOpaqueGeometry(vtkViewport* viewport) override;
-
-};
-
-int myVtkAxesActor::RenderOpaqueGeometry(vtkViewport* vp) {
-    int renderedSomething = vtkAxesActor::RenderOpaqueGeometry(vp);
-    this->GetXAxisCaptionActor2D()->GetCaptionTextProperty()->SetFontSize(1);
-    this->XAxisLabel->RenderOpaqueGeometry(vp);
-    captionActor->GetCaptionTextProperty()
-    std::cout << "zzz111111111" << std::endl;
-    return renderedSomething;
-}
-
-vtkStandardNewMacro(myVtkAxesActor);
-} // namespace
-
+#include <vtkTextActor.h>
 
 int main(int, char*[])
 {
@@ -70,7 +46,7 @@ int main(int, char*[])
     renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
 
 
-    vtkNew<myVtkAxesActor> axes;
+    vtkNew<vtkAxesActor> axes;
     vtkNew<vtkAxesActor> axes1;
 
     vtkNew<vtkTransform> transform;
@@ -78,11 +54,13 @@ int main(int, char*[])
     axes->SetUserTransform(transform);
     axes->SetTotalLength(0.1,0.1,0.1);
 
-    vtkTextProperty* tprop = axes->GetXAxisCaptionActor2D()->GetCaptionTextProperty();
-    tprop->SetFontSize(5);
+    axes1->GetXAxisCaptionActor2D()->GetTextActor()->SetTextScaleModeToNone();
+    axes1->GetXAxisCaptionActor2D()->GetCaptionTextProperty()->SetFontSize(5);
 
-    axes->GetYAxisCaptionActor2D()->GetCaptionTextProperty()->ShallowCopy(tprop);
-    axes->GetZAxisCaptionActor2D()->GetCaptionTextProperty()->ShallowCopy(tprop);
+    axes1->GetYAxisCaptionActor2D()->GetTextActor()->SetTextScaleModeToNone();
+    axes1->GetYAxisCaptionActor2D()->GetCaptionTextProperty()->SetFontSize(10);
+    axes1->GetZAxisCaptionActor2D()->GetTextActor()->SetTextScaleModeToNone();
+    axes1->GetZAxisCaptionActor2D()->GetCaptionTextProperty()->SetFontSize(20);
 
     renderer->AddActor(axes);
     renderer->AddActor(axes1);
