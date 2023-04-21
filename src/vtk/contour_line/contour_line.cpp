@@ -101,17 +101,21 @@ namespace
             double rangeMin = originData->GetScalarRange()[0];
             double rangeMax = originData->GetScalarRange()[1];
             contourFilter->SetInputData(this->DatasetMapper->GetInput());
-            this->contourFilter->GenerateValues(3, rangeMin, rangeMax);
-            contourFilter->Update(); // 要想打印日志必须调用Update或者render来触发update
+            this->contourFilter->GenerateValues(7, rangeMin, rangeMax); // todo：极值的bug
+            contourFilter->Update();                                    // 要想打印日志必须调用Update或者render来触发update
             contourFilter->GetOutput()->PrintSelf(std::cout, (vtkIndent)2);
 
             // Mapper
             contourMapper->SetInputConnection(contourFilter->GetOutputPort());
             contourMapper->ScalarVisibilityOn();
+            `->SetLookupTable(DatasetMapper->GetLookupTable());
             contourMapper->SetScalarModeToUsePointData();
+            contourMapper->UseLookupTableScalarRangeOn(); // 代替SetScalarRange()方法，与lookupTable使用相同的ScalarRange;
 
             // actor
             contourActor->SetMapper(contourMapper);
+            contourActor->GetProperty()->SetLineWidth(3);
+
             this->CurrentRenderer->AddActor(contourActor);
             // 等值线(结束)--lius
             this->GetInteractor()->GetRenderWindow()->Render();
@@ -132,7 +136,6 @@ namespace
             // this->CurrentRenderer->AddActor(actor2D);
 
             // 方案二：间隔指定点显示标签
-            // 拿到总的节点个数与
             auto data = contourFilter->GetOutput();
             vtkNew<vtkPolyData> labelPolyData;
             vtkNew<vtkPoints> labelPoints;
@@ -221,7 +224,7 @@ namespace
 int main(int, char *[])
 {
     vtkNew<vtkNamedColors> colors;
-    vtkNew<vtkUnstructuredGrid> grid;   /* 创建一个非结构化网格对象 */
+    vtkNew<vtkUnstructuredGrid> grid; /* 创建一个非结构化网格对象 */
     /*=============================网格节点=============================*/
     vtkNew<vtkPoints> meshPoints; /* 用于存储网格节点 */
     meshPoints->InsertNextPoint(20, 0, 0);
@@ -398,34 +401,27 @@ int main(int, char *[])
     grid->InsertNextCell(VTK_QUAD, 4, pointsId->GetPointer(0));
     /*=================================================================*/
 
-    /*==============================设置单元颜色========================*/
-    vtkNew<vtkFloatArray> color;                        /* 用于设置每个单元的随机颜色 */
+    /*==============================设置节点颜色========================*/
+    vtkNew<vtkFloatArray> color; /* 用于设置每个节点的随机颜色 */
     for (int i = 0; i < grid->GetNumberOfPoints(); ++i)
     {
         color->InsertNextValue(std::rand());
     }
     color->SetName("zzy");
-    // grid->GetCellData()->SetScalars(color);             /* 设置单元格的颜色 */
     grid->GetPointData()->AddArray(color);
     grid->GetPointData()->SetScalars(grid->GetPointData()->GetArray("zzy"));
-    /*=================================================================*/
-
-    /*==============================单元——>节点========================*/
-    vtkNew<vtkCellDataToPointData> theCellDataToPointData;
-    theCellDataToPointData->SetInputData(grid);
-    theCellDataToPointData->PassCellDataOn();
-    theCellDataToPointData->Update();
     /*=================================================================*/
 
     // vtkDataSetMapper
     vtkNew<vtkDataSetMapper> dataSetMapper;
     dataSetMapper->SetInputData(grid);
+    dataSetMapper->ScalarVisibilityOff(); // 原始图像颜色是否显示控制
     dataSetMapper->UseLookupTableScalarRangeOn(); // 代替SetScalarRange()方法，与lookupTable使用相同的ScalarRange;
     dataSetMapper->SetScalarModeToUsePointData(); // 使用结点数据
 
     // 颜色映射表
-    vtkNew<vtkLookupTable> pColorTableModel;
-    pColorTableModel->SetNumberOfColors(12);
+    vtkSmartPointer<vtkLookupTable> pColorTableModel = vtkSmartPointer<vtkLookupTable>::New();
+    pColorTableModel->SetNumberOfColors(7);
     pColorTableModel->SetHueRange(0.67, 0); // 色调从蓝色到绿色到红色，【0，0.67】则表示从红色到蓝红色
     pColorTableModel->SetValueRange(0.7529, 0.7059);
     pColorTableModel->SetSaturationRange(0.69, 0.97);
@@ -454,7 +450,7 @@ int main(int, char *[])
     scalarBarActor->GetLabelTextProperty()->ItalicOff(); // “标签”关闭斜体
     scalarBarActor->GetTitleTextProperty()->BoldOff();   // “标题”不加粗
     scalarBarActor->GetLabelTextProperty()->BoldOff();   // “标签”不加粗
-    scalarBarActor->SetNumberOfLabels(13);
+    scalarBarActor->SetNumberOfLabels(7);
     // scalarBarActor->SetLabelFormat("%!f(string=2023)");//%-#6.3g
     scalarBarActor->SetLabelFormat("%.3e"); //
 

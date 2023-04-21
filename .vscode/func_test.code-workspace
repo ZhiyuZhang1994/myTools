@@ -1,0 +1,139 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "..\\..\\..\\..\\vtk-v9.1.0"
+		}
+	],
+    "settings": {
+        "files.autoSave": "onFocusChange",
+        "terminal.integrated.profiles.windows": {
+            "bash": {
+                "path": "D:\\Programs\\Git\\bin\\bash.exe",
+                "args": []
+            }
+        },
+        "terminal.integrated.defaultProfile.windows": "bash",
+        "highlightwords.colors": [
+            {
+                "light": "#b3d9ff",
+                "dark": "cyan"
+            },
+            {
+                "light": "#e6ffb3",
+                "dark": "pink"
+            },
+            {
+                "light": "#b3b3ff",
+                "dark": "lightgreen"
+            },
+            {
+                "light": "#ffd9b3",
+                "dark": "magenta"
+            },
+            {
+                "light": "#ffb3ff",
+                "dark": "cornflowerblue"
+            },
+            {
+                "light": "#b3ffb3",
+                "dark": "orange"
+            },
+            {
+                "light": "#ffff80",
+                "dark": "green"
+            },
+            {
+                "light": "#d1e0e0",
+                "dark": "red"
+            }
+        ],
+        "highlightwords.box": {
+            "light": false,
+            "dark": true
+        },
+        "highlightwords.defaultMode": {
+            "default": 0
+        },
+        "highlightwords.showSidebar": {
+            "default": true
+        },
+        "files.associations": {
+            "array": "cpp",
+            "atomic": "cpp",
+            "*.tcc": "cpp",
+            "cctype": "cpp",
+            "clocale": "cpp",
+            "cmath": "cpp",
+            "cstdarg": "cpp",
+            "cstddef": "cpp",
+            "cstdint": "cpp",
+            "cstdio": "cpp",
+            "cstdlib": "cpp",
+            "cwchar": "cpp",
+            "cwctype": "cpp",
+            "deque": "cpp",
+            "unordered_map": "cpp",
+            "vector": "cpp",
+            "exception": "cpp",
+            "algorithm": "cpp",
+            "map": "cpp",
+            "memory": "cpp",
+            "memory_resource": "cpp",
+            "optional": "cpp",
+            "string": "cpp",
+            "string_view": "cpp",
+            "system_error": "cpp",
+            "tuple": "cpp",
+            "type_traits": "cpp",
+            "utility": "cpp",
+            "fstream": "cpp",
+            "initializer_list": "cpp",
+            "iosfwd": "cpp",
+            "iostream": "cpp",
+            "istream": "cpp",
+            "limits": "cpp",
+            "new": "cpp",
+            "ostream": "cpp",
+            "sstream": "cpp",
+            "stdexcept": "cpp",
+            "streambuf": "cpp",
+            "typeinfo": "cpp",
+            "functional": "cpp",
+            "iterator": "cpp",
+            "unordered_set": "cpp",
+            "queue": "cpp",
+            "chrono": "cpp",
+            "condition_variable": "cpp",
+            "ctime": "cpp",
+            "ratio": "cpp",
+            "mutex": "cpp",
+            "thread": "cpp",
+            "iomanip": "cpp",
+            "future": "cpp",
+            "set": "cpp",
+            "*.ipp": "cpp",
+            "shared_mutex": "cpp",
+            "cstring": "cpp",
+            "bitset": "cpp",
+            "codecvt": "cpp",
+            "csignal": "cpp",
+            "list": "cpp",
+            "numeric": "cpp",
+            "*.txx": "cpp",
+            "strstream": "cpp",
+            "complex": "cpp",
+            "csetjmp": "cpp",
+            "random": "cpp",
+            "regex": "cpp",
+            "cfenv": "cpp",
+            "cinttypes": "cpp",
+            "typeindex": "cpp",
+            "valarray": "cpp",
+            "variant": "cpp",
+            "*.in": "cpp"
+        }
+    }
+}
