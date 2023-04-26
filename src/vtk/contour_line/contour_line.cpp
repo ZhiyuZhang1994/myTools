@@ -107,8 +107,8 @@ namespace
             double rangeMin = originData->GetScalarRange()[0];
             double rangeMax = originData->GetScalarRange()[1];
             contourFilter->SetInputData(this->DatasetMapper->GetInput());
-            this->contourFilter->GenerateValues(num, rangeMin, rangeMax); // todo：极值的bug
-            contourFilter->Update();                                    // 要想打印日志必须调用Update或者render来触发update
+            this->contourFilter->GenerateValues(num + 2, rangeMin, rangeMax);
+            contourFilter->Update(); // 要想打印日志必须调用Update或者render来触发update
             contourFilter->GetOutput()->PrintSelf(std::cout, (vtkIndent)2);
 
             // Mapper
@@ -131,7 +131,7 @@ namespace
             {
                 vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
                 nodeLabelMapper->SetInputData(contourFilter->GetOutput());
-                nodeLabelMapper->SetLabelFormat("%d");  // 设置格式为整数
+                nodeLabelMapper->SetLabelFormat("%d"); // 设置格式为整数
                 vtkSmartPointer<vtkActor2D> actor2D = vtkSmartPointer<vtkActor2D>::New();
                 nodeLabelMapper->GetLabelTextProperty()->SetColor(0.0, 1.0, 0.0);
                 actor2D->SetMapper(nodeLabelMapper);
@@ -139,25 +139,26 @@ namespace
             }
 
             labelContourLine();
+            setScalarBarAnnotation(); // 设置图例的左边注释
         }
 
-        void labelContourLine() {
+        void labelContourLine()
+        {
             // 等值线图上的标签
             {
-            // 方案一：所有点都显示数值标签
-            // vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
-            // labelMapper->SetInputData(contourFilter->GetOutput());
-            // labelMapper->SetFieldDataName("zzy");
-            // labelMapper->SetLabelModeToLabelFieldData();
-            // labelMapper->SetLabelFormat("%0.3e");
-            // labelMapper->GetLabelTextProperty()->SetFontSize(10);
-            // labelMapper->GetLabelTextProperty()->ItalicOff();
-            // labelMapper->GetLabelTextProperty()->SetColor(1.0, 0.0, 0.0);
-            // vtkSmartPointer<vtkActor2D> actor2D = vtkSmartPointer<vtkActor2D>::New();
-            // actor2D->SetMapper(labelMapper);
-            // this->CurrentRenderer->AddActor(actor2D);
+                // 方案一：所有点都显示数值标签
+                // vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
+                // labelMapper->SetInputData(contourFilter->GetOutput());
+                // labelMapper->SetFieldDataName("zzy");
+                // labelMapper->SetLabelModeToLabelFieldData();
+                // labelMapper->SetLabelFormat("%0.3e");
+                // labelMapper->GetLabelTextProperty()->SetFontSize(10);
+                // labelMapper->GetLabelTextProperty()->ItalicOff();
+                // labelMapper->GetLabelTextProperty()->SetColor(1.0, 0.0, 0.0);
+                // vtkSmartPointer<vtkActor2D> actor2D = vtkSmartPointer<vtkActor2D>::New();
+                // actor2D->SetMapper(labelMapper);
+                // this->CurrentRenderer->AddActor(actor2D);
             }
-
 
             // 方案二：间隔指定点显示标签
             auto data = contourFilter->GetOutput();
@@ -170,21 +171,24 @@ namespace
             vtkNew<vtkCharArray> labelScalars;
             labelScalars->SetNumberOfComponents(1);
             labelScalars->SetName("value_zzy");
-            vtkDataArray* scalars = data->GetPointData()->GetScalars();
-            vtkPoints* points = data->GetPoints();
+            vtkDataArray *scalars = data->GetPointData()->GetScalars();
+            vtkPoints *points = data->GetPoints();
 
             vtkNew<vtkGenericCell> cell;
-            for (vtkIdType cellId = 0; cellId < stripperResult->GetNumberOfCells(); ++cellId) { // 遍历stripper里的单元
+            for (vtkIdType cellId = 0; cellId < stripperResult->GetNumberOfCells(); ++cellId)
+            {                                          // 遍历stripper里的单元
                 stripperResult->GetCell(cellId, cell); // 拿到每一个单元
                 // 获取该单元所有节点对应的label字符
-                vtkIdType firstPointIdOfCell = cell->GetPointId(0); // 单元里的第一个节点id：该id编号需要与等值线图编号一致
-                double firstPointContourValue = scalars->GetTuple1(firstPointIdOfCell); // 第一个节点对应的等值
+                vtkIdType firstPointIdOfCell = cell->GetPointId(0);                              // 单元里的第一个节点id：该id编号需要与等值线图编号一致
+                double firstPointContourValue = scalars->GetTuple1(firstPointIdOfCell);          // 第一个节点对应的等值
                 char firstPointLabel = getCorrespondLabelOfContourValue(firstPointContourValue); // 获取值对应的标注字符
                 // 每隔一定个数写一个label字符
                 double pointCoord[3];
-                for (vtkIdType pointIdIndex = 0; pointIdIndex < cell->GetNumberOfPoints(); ++pointIdIndex) {
+                for (vtkIdType pointIdIndex = 0; pointIdIndex < cell->GetNumberOfPoints(); ++pointIdIndex)
+                {
                     vtkIdType pointId = cell->GetPointId(pointIdIndex);
-                    if (pointId % 2 != 0) { // 隔5个点标一个数值
+                    if (pointId % 2 != 0)
+                    { // 隔5个点标一个数值
                         continue;
                     }
                     points->GetPoint(pointId, pointCoord);
@@ -204,14 +208,28 @@ namespace
             this->CurrentRenderer->AddActor(actor2D);
         }
 
-
-        char getCorrespondLabelOfContourValue(double contourValue) {
+        char getCorrespondLabelOfContourValue(double contourValue)
+        {
             auto originData = this->DatasetMapper->GetInput();
             double rangeMin = originData->GetScalarRange()[0];
             double rangeMax = originData->GetScalarRange()[1];
-            double each = (rangeMax - rangeMin) / (num - 1); // 一个增长量的大小
+            double each = (rangeMax - rangeMin) / (num - 1);                    // 一个增长量的大小
             std::uint8_t num_id = std::round((contourValue - rangeMin) / each); // 四舍五入得到当前等值参数对应的下标
             return num_id + 'A';
+        }
+
+        void setScalarBarAnnotation()
+        {
+            auto lut = DatasetMapper->GetLookupTable();
+            double temp = 0;
+            std::string label;
+            for (std::uint8_t index = 0; index < 5; index++)
+            {
+                temp += 3;
+                label = static_cast<char>('A' + index);
+                label += "=";
+                lut->SetAnnotation(vtkVariant(temp), label);
+            }
         }
 
         void OnChar() override
@@ -455,7 +473,7 @@ int main(int, char *[])
     vtkNew<vtkFloatArray> color; /* 用于设置每个节点的随机颜色 */
     for (int i = 0; i < grid->GetNumberOfPoints(); ++i)
     {
-        color->InsertNextValue(std::rand());
+        color->InsertNextValue(i);
     }
     color->SetName("zzy");
     grid->GetPointData()->AddArray(color);
@@ -471,7 +489,7 @@ int main(int, char *[])
 
     // 颜色映射表
     vtkSmartPointer<vtkLookupTable> pColorTableModel = vtkSmartPointer<vtkLookupTable>::New();
-    pColorTableModel->SetNumberOfColors(num);
+    pColorTableModel->SetNumberOfColors(num + 1);
     pColorTableModel->SetHueRange(0.67, 0); // 色调从蓝色到绿色到红色，【0，0.67】则表示从红色到蓝红色
     pColorTableModel->SetValueRange(0.7529, 0.7059);
     pColorTableModel->SetSaturationRange(0.69, 0.97);
@@ -490,7 +508,7 @@ int main(int, char *[])
     actorGrid->GetProperty()->SetEdgeVisibility(1);
 
     // 设置scalarBar（色卡）
-    vtkNew<vtkScalarBarActor> scalarBarActor;
+    vtkSmartPointer<vtkScalarBarActor> scalarBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
     scalarBarActor->SetLookupTable(pColorTableModel);
 
     scalarBarActor->SetTitle("Height");
@@ -500,9 +518,9 @@ int main(int, char *[])
     scalarBarActor->GetLabelTextProperty()->ItalicOff(); // “标签”关闭斜体
     scalarBarActor->GetTitleTextProperty()->BoldOff();   // “标题”不加粗
     scalarBarActor->GetLabelTextProperty()->BoldOff();   // “标签”不加粗
-    scalarBarActor->SetNumberOfLabels(num);
+    scalarBarActor->SetNumberOfLabels(num + 2);
     // scalarBarActor->SetLabelFormat("%!f(string=2023)");//%-#6.3g
-    scalarBarActor->SetLabelFormat("%.3e"); //
+    scalarBarActor->SetLabelFormat("%.3ecm"); // 设置统一后缀
 
     // 显示points标量值
     vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
