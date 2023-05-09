@@ -17,7 +17,7 @@
 #include <vtkDistanceToCamera.h>
 #include <vtkGlyph3DMapper.h>
 #include <vtkImageData.h>
-#include <vtkJPEGReader.h>
+#include <vtkPNGReader.h>
 #include <vtkNamedColors.h>
 #include <vtkNew.h>
 #include <vtkPlaneSource.h>
@@ -32,19 +32,13 @@
 #include <vtkTextureMapToPlane.h>
 
 int main(int argc, char* argv[]) {
-    // Parse command line arguments
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " Filename e.g. Yinyang.jpg"
-                  << std::endl;
-        return EXIT_FAILURE;
-    }
 
     vtkNew<vtkNamedColors> colors;
 
-    std::string inputFilename = argv[1];
+    std::string inputFilename = "D:\\work_station\\befem-studio\\share\\befem-studio.png";
 
     // Read the image which will be the texture
-    vtkNew<vtkJPEGReader> jPEGReader;
+    vtkNew<vtkPNGReader> jPEGReader;
     jPEGReader->SetFileName(inputFilename.c_str());
 
     // Create a plane

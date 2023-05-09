@@ -79,15 +79,17 @@ int main()
     ss << time;
 
     ss << "————————————\n";
-    ss << "节点结果\n";
-    // ss << "载荷步  载荷步1";
+    ss << "  节点结果\n";
+    ss << "载荷步  载荷步1";
 
     std::string title = ss.str();
     std::cout << title << std::endl;
     auto timeActor_ = vtkSmartPointer<vtkTextActor>::New();
     timeActor_->SetInput(title.c_str());
     timeActor_->GetTextProperty()->SetJustificationToLeft();
-    double timeColor[3] = {0.0, 1.0, 0.0};
+    double timeColor[3] = {1.0, 1.0, 1.0};
+    timeActor_->GetTextProperty()->SetFontFamily(VTK_FONT_FILE);
+    timeActor_->GetTextProperty()->SetFontFile("C:\\Windows\\Fonts\\simkai.ttf");
     timeActor_->GetTextProperty()->SetColor(timeColor);
     timeActor_->GetTextProperty()->SetFontSize(15);
     timeActor_->GetTextProperty()->SetVerticalJustificationToCentered();

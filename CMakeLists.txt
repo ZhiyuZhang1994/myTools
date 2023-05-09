@@ -6,12 +6,15 @@ CommonColor
 CommonCore
 CommonDataModel
 FiltersPoints
+FiltersTexture
 FiltersCore
 FiltersExtraction
 FiltersGeneral
 FiltersGeometry
 FiltersSources
 InteractionStyle
+InteractionImage
+
 RenderingContextOpenGL2
 RenderingCore
 RenderingFreeType
