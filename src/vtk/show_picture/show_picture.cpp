@@ -89,7 +89,7 @@ int main()
     fixSizeAndPosPicture->SetInteractor(renderWindowInteractor);
     fixSizeAndPosPicture->SetEnabled(true);
     fixSizeAndPosPicture->SetInteractive(false);
-    fixSizeAndPosPicture->SetViewport(0.2, 0.2, 0.4 , 0.4); // 图片位置设置
+    fixSizeAndPosPicture->SetViewport(0.2, 0.2, 0.4 , 0.4); // 图片位置和大小设置
 
     renderWindow->Render();
     renderWindowInteractor->Initialize();
