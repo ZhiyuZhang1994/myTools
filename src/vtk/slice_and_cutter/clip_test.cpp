@@ -189,7 +189,7 @@ int main(int, char *[])
     // cout << "points num: " << points->GetNumberOfPoints() << endl;
     // 模拟标量数据，暂定为结点y坐标
     vtkSmartPointer<vtkDoubleArray> doubleArray = vtkSmartPointer<vtkDoubleArray>::New();
-    for (size_t i = 0; i < points->GetNumberOfPoints(); i++)
+    for (vtkIdType i = 0; i < points->GetNumberOfPoints(); i++)
     {
         doubleArray->InsertNextTuple1(points->GetPoint(i)[1]); // 每个结点的y坐标
     }
