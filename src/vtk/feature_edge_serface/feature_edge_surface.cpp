@@ -37,7 +37,6 @@
 #include <vtkActor.h>
 #include <vtkCamera.h>
 #include <vtkCellType.h>
-#include <vtkFeatureEdges.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
@@ -48,7 +47,6 @@
 #include <vtkTriangle.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkSmartPointer.h>
-#include <vtkFeatureEdges.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkTetra.h>
 #include <vtkCellArray.h>

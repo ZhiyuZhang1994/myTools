@@ -1,5 +1,5 @@
 /**
- * @brief 切块
+ * @brief 实时切块
  * 将vtkPlane作为vtkClipDataSet的参数来获取被切actor上指定位置的切块
  * @author zhangzhiyu
  * @date 2023-01-05
