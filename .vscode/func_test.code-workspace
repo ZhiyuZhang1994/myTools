@@ -133,7 +133,8 @@
             "typeindex": "cpp",
             "valarray": "cpp",
             "variant": "cpp",
-            "*.in": "cpp"
+            "*.in": "cpp",
+            "source_location": "cpp"
         }
     }
 }

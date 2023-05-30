@@ -1,0 +1,114 @@
+/**
+ * @brief 打点计时器工具
+ * @author zhangzhiyu
+ * @date 2023-05-30
+ */
+
+#pragma once
+#include <chrono>
+#include <string>
+
+// template <class Accuracy = std::chrono::steady_clock::time_point>
+class Ticker {
+public:
+    static const std::uint16_t MAX_TICK_TIMES = 500; // 最大的打点次数
+
+public:
+    Ticker(std::string info = "nothing");
+    ~Ticker();
+    /**
+     * @brief 打印计时全过程对应的耗时数据
+     */
+    void dumpTotalTimeElapseInfo();
+
+    /**
+     * @brief 打印每次打点对应的耗时数据
+     */
+    void dumpEveryTickElapseInfo();
+
+    /**
+     * @brief 获取定时器启动的时间
+     * @return steady_clock::time_point 启动时间
+     */
+    std::chrono::steady_clock::time_point getStartTime() const;
+
+    /**
+     * @brief 获取打点计数器的总用时
+     * 
+     * @return std::uint64_t 总共用时(ms)
+     */
+    std::uint64_t getTotalTimeElapsed();
+
+    /**
+     * @brief 获取当前打点的次数
+     * @return std::uint32_t 打点次数
+     */
+    std::uint32_t getCount() const;
+
+    /**
+     * @brief 查询打点index对应的打点时间
+     * 
+     * @param index 打点次数
+     * @return steady_clock::time_point 打点时对应的时间
+     */
+    std::chrono::steady_clock::time_point getTickTime(std::uint32_t index);
+
+    /**
+     * @brief 查询的打点次数是否有效
+     * 
+     * @param index 打点次数
+     * @return true 无效
+     * @return false 有效
+     */
+    bool isInValidIndex(std::uint32_t index);
+
+    /**
+     * @brief 启动计时
+     */
+    void start();
+
+    /**
+     * @brief 打点计时接口
+     * 
+     * @return std::uint64_t 返回上次打点到此次打点经过的时间(ms)
+     */
+    std::uint64_t tick();
+
+    /**
+     * @brief 获取花费时间最长的一个打点索引
+     * @return std::uint32_t 花费时间最长阶段对应的打点次数
+     */
+    std::uint32_t getTickMaxElapsedTimeIndex();
+
+    /**
+     * @brief 获取花费时间最短的一个打点索引
+     * @return std::uint32_t 花费时间最短阶段对应的打点次数
+     */
+    std::uint32_t getTickMinElapsedTimeIndex();
+
+private:
+    /**
+     * @brief 获取当前的时间
+     * @return steady_clock::time_point 时间对象
+     */
+    static std::chrono::steady_clock::time_point getCurrTime();
+
+    /**
+     * @brief 获取自上一次打点到此次打点经过的时间
+     * 
+     * @param index 此次打点的索引
+     * @return std::uint64_t 经过的时间(ms)
+     */
+    std::uint64_t getTickElapsedTime(std::uint32_t index);
+
+private:
+    std::chrono::steady_clock::time_point startTime_; // 开始计时的时间
+
+    std::chrono::steady_clock::time_point endTime_; // 最后一次计时的时间
+
+    std::uint32_t count_ = 0; // 打点的次数
+
+    std::chrono::steady_clock::time_point counterTimes_[MAX_TICK_TIMES]; // 存储每次打点的时间
+
+    std::string timerInfo_; // 计时器描述
+};
