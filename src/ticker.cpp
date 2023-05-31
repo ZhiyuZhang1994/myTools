@@ -5,10 +5,7 @@
  */
 
 #include "tools/ticker.h"
-#include <chrono>
 #include <iostream>
-
-namespace abc {
 
 const std::unordered_map<Ticker::TickTimeUnit, std::string> Ticker::UNIT_STRING {
     {TickTimeUnit::MS, "ms"},
@@ -81,9 +78,9 @@ bool Ticker::isInValidIndex(std::uint32_t index) {
 
 void Ticker::dumpEveryTickElapseInfo() {
     std::cout << "Ticker: " << tickerInfo_ << std::endl;
-    for(std::uint32_t i = 1; i < count_; i++) {
+    for (std::uint32_t i = 1; i < count_; i++) {
         std::cout << "Tick " << i << ": time:   ";
-        auto tickTimeInfo  = getTickElapsedTimeInfo(i);
+        auto tickTimeInfo = getTickElapsedTimeInfo(i);
         std::cout << tickTimeInfo.first << UNIT_STRING.at(unit_) << ";   msg: " << tickTimeInfo.second << std::endl;
     }
 }
@@ -109,7 +106,8 @@ std::pair<std::uint64_t, std::string> Ticker::getTickElapsedTimeInfo(std::uint32
         res = std::make_pair(0, "start");
     } else {
         auto time = std::chrono::duration_cast<std::chrono::duration<std::uint64_t, std::milli>>(tickInfo_[index].first -
-            tickInfo_[index - 1].first).count();
+                                                                                                 tickInfo_[index - 1].first)
+                        .count();
         if (unit_ == TickTimeUnit::S) {
             time = time / 1000;
         }
@@ -151,6 +149,4 @@ std::uint32_t Ticker::getTickMinElapsedTimeIndex() {
         }
     }
     return result;
-}
-
 }

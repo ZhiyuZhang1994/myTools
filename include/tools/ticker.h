@@ -1,9 +1,11 @@
 /**
  * @brief 打点计时器工具
  * 功能列表：
- * 1、查询每次打点或者整个打点过程的耗时与描述信息
- * 2、设置输出单位(s、ms)，默认为：ms
- * 3、设置打点信息实时输出或者用户自定义时间输出
+    1）打点时，可输入打点的描述信息
+    2）提供查询每次打点或者整个打点过程的耗时与描述信息
+    3）提供设置输出单位方法(s、ms)，默认为：ms
+    4）提供设置打点信息实时输出或者用户自定义时间输出方法
+    5）提供查询耗时最大/小的打点序号
  * @author zhangzhiyu
  * @date 2023-05-30
  */
@@ -13,11 +15,9 @@
 
 #include <chrono>
 #include <string>
-#include <vector>
-#include <utility>
 #include <unordered_map>
-
-namespace abc {
+#include <utility>
+#include <vector>
 
 class Ticker {
 public:
@@ -26,7 +26,7 @@ public:
 
     enum TickTimeUnit {
         MS, // milliseconds. 默认。
-        S, // seconds.
+        S,  // seconds.
     };
 
 public:
@@ -131,20 +131,19 @@ private:
 private:
     static const std::unordered_map<TickTimeUnit, std::string> UNIT_STRING; // 单位信息
 
-    bool realTime_ = false; // 默认不实时输出，不影响程序运行性能
+    bool realTime_ = false;                                                 // 默认不实时输出，不影响程序运行性能
 
-    std::chrono::steady_clock::time_point startTime_; // 开始计时的时间
+    std::chrono::steady_clock::time_point startTime_;                       // 开始计时的时间
 
-    std::chrono::steady_clock::time_point endTime_; // 最后一次计时的时间
+    std::chrono::steady_clock::time_point endTime_;                         // 最后一次计时的时间
 
-    std::uint32_t count_ = 0; // 打点的次数
+    std::uint32_t count_ = 0;                                               // 打点的次数
 
-    std::vector<TimeStampInfo_t> tickInfo_; // 存储每次打点的信息
+    std::vector<TimeStampInfo_t> tickInfo_;                                 // 存储每次打点的信息
 
-    std::string tickerInfo_; // 计时器描述
+    std::string tickerInfo_;                                                // 计时器描述
 
-    TickTimeUnit unit_ = TickTimeUnit::MS; // 默认输出单位
+    TickTimeUnit unit_ = TickTimeUnit::MS;                                  // 默认输出单位
 };
-}
 
 #endif // INCLUDE_TOOLS_TICKER_H_
