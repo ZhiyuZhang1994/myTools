@@ -10,6 +10,11 @@
 
 namespace abc {
 
+const std::unordered_map<Ticker::TickTimeUnit, std::string> Ticker::UNIT_STRING {
+    {TickTimeUnit::MS, "ms"},
+    {TickTimeUnit::S, "s"},
+};
+
 Ticker::Ticker(std::string pInfo) : tickInfo_(MAX_TICK_TIMES) {
     startTime_ = getCurrTime();
     endTime_ = startTime_;
@@ -20,19 +25,34 @@ Ticker::Ticker(std::string pInfo) : tickInfo_(MAX_TICK_TIMES) {
 Ticker::~Ticker() {
 }
 
-void Ticker::start() {
+void Ticker::setTickTimeUnit(TickTimeUnit unit) {
+    unit_ = unit;
+}
+
+void Ticker::setOutputTickInfoInRealTime() {
+    realTime_ = true;
+}
+
+void Ticker::start(std::string msg) {
     count_ = 0;
     startTime_ = getCurrTime();
     endTime_ = startTime_;
-    tickInfo_[count_] = std::make_pair(startTime_, "Start");
+    tickInfo_[count_] = std::make_pair(startTime_, msg);
     count_++;
 }
 
 std::uint64_t Ticker::tick(std::string msg) {
     std::chrono::steady_clock::time_point tmpTime = endTime_;
     endTime_ = getCurrTime();
+    std::uint64_t spendTime = std::chrono::duration_cast<std::chrono::duration<std::uint64_t, std::milli>>(endTime_ - tmpTime).count();
+    spendTime = (unit_ == TickTimeUnit::S) ? spendTime / 1000 : spendTime;
+
+    if (realTime_) {
+        std::cout << "Tick " << count_ << ": time:   ";
+        std::cout << spendTime << UNIT_STRING.at(unit_) << ";   msg: " << msg << std::endl;
+    }
     tickInfo_[count_++] = std::make_pair(endTime_, msg);
-    return std::chrono::duration_cast<std::chrono::duration<std::uint64_t, std::milli>>(endTime_ - tmpTime).count();
+    return spendTime;
 }
 
 std::chrono::steady_clock::time_point Ticker::getStartTime() const {
@@ -64,20 +84,20 @@ void Ticker::dumpEveryTickElapseInfo() {
     for(std::uint32_t i = 1; i < count_; i++) {
         std::cout << "Tick " << i << ": time:   ";
         auto tickTimeInfo  = getTickElapsedTimeInfo(i);
-        std::cout << tickTimeInfo.first << "(ms);   msg: " << tickTimeInfo.second << std::endl;
+        std::cout << tickTimeInfo.first << UNIT_STRING.at(unit_) << ";   msg: " << tickTimeInfo.second << std::endl;
     }
 }
 
 void Ticker::dumpTotalTimeElapseInfo() {
     std::uint64_t spendTime = getTotalTimeElapsed();
     std::cout << "Ticker: " << tickerInfo_ << std::endl;
-    std::cout << "Total spend: " << spendTime << "(ms);" << std::endl;
+    std::cout << "Total spend: " << spendTime << UNIT_STRING.at(unit_) << ";" << std::endl;
 }
 
 std::uint64_t Ticker::getTotalTimeElapsed() {
-    std::chrono::duration<std::uint64_t, std::milli> milliseconds_span =
-        std::chrono::duration_cast<std::chrono::duration<std::uint64_t, std::milli>>(endTime_ - startTime_);
-    return milliseconds_span.count();
+    std::uint64_t spendTime =
+        std::chrono::duration_cast<std::chrono::duration<std::uint64_t, std::milli>>(endTime_ - startTime_).count();
+    return (unit_ == TickTimeUnit::S) ? spendTime / 1000 : spendTime;
 }
 
 std::pair<std::uint64_t, std::string> Ticker::getTickElapsedTimeInfo(std::uint32_t index) {
@@ -90,6 +110,9 @@ std::pair<std::uint64_t, std::string> Ticker::getTickElapsedTimeInfo(std::uint32
     } else {
         auto time = std::chrono::duration_cast<std::chrono::duration<std::uint64_t, std::milli>>(tickInfo_[index].first -
             tickInfo_[index - 1].first).count();
+        if (unit_ == TickTimeUnit::S) {
+            time = time / 1000;
+        }
         std::string msg = tickInfo_[index].second;
         res = std::make_pair(time, msg);
     }

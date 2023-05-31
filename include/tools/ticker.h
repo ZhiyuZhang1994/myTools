@@ -1,5 +1,9 @@
 /**
  * @brief 打点计时器工具
+ * 功能列表：
+ * 1、查询每次打点或者整个打点过程的耗时与描述信息
+ * 2、设置输出单位(s、ms)，默认为：ms
+ * 3、设置打点信息实时输出或者用户自定义时间输出
  * @author zhangzhiyu
  * @date 2023-05-30
  */
@@ -11,6 +15,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <unordered_map>
 
 namespace abc {
 
@@ -19,9 +24,25 @@ public:
     static const std::uint16_t MAX_TICK_TIMES = 500; // 最大的打点次数
     using TimeStampInfo_t = std::pair<std::chrono::steady_clock::time_point, std::string>;
 
+    enum TickTimeUnit {
+        MS, // milliseconds. 默认。
+        S, // seconds.
+    };
+
 public:
     Ticker(std::string info = "Default ticker name");
     ~Ticker();
+
+    /**
+     * @brief 设置输出单位(s、ms)
+     */
+    void setTickTimeUnit(TickTimeUnit unit);
+
+    /**
+     * @brief 设置实时输出
+     */
+    void setOutputTickInfoInRealTime();
+
     /**
      * @brief 打印计时全过程对应的耗时数据
      */
@@ -71,7 +92,7 @@ public:
     /**
      * @brief 启动计时
      */
-    void start();
+    void start(std::string msg = "start");
 
     /**
      * @brief 打点计时接口
@@ -108,6 +129,10 @@ private:
     std::pair<std::uint64_t, std::string> getTickElapsedTimeInfo(std::uint32_t index);
 
 private:
+    static const std::unordered_map<TickTimeUnit, std::string> UNIT_STRING; // 单位信息
+
+    bool realTime_ = false; // 默认不实时输出，不影响程序运行性能
+
     std::chrono::steady_clock::time_point startTime_; // 开始计时的时间
 
     std::chrono::steady_clock::time_point endTime_; // 最后一次计时的时间
@@ -117,6 +142,8 @@ private:
     std::vector<TimeStampInfo_t> tickInfo_; // 存储每次打点的信息
 
     std::string tickerInfo_; // 计时器描述
+
+    TickTimeUnit unit_ = TickTimeUnit::MS; // 默认输出单位
 };
 }
 
