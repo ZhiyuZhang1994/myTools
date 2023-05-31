@@ -4,17 +4,23 @@
  * @date 2023-05-30
  */
 
-#pragma once
+#ifndef INCLUDE_TOOLS_TICKER_H_
+#define INCLUDE_TOOLS_TICKER_H_
+
 #include <chrono>
 #include <string>
+#include <vector>
+#include <utility>
 
-// template <class Accuracy = std::chrono::steady_clock::time_point>
+namespace abc {
+
 class Ticker {
 public:
     static const std::uint16_t MAX_TICK_TIMES = 500; // 最大的打点次数
+    using TimeStampInfo_t = std::pair<std::chrono::steady_clock::time_point, std::string>;
 
 public:
-    Ticker(std::string info = "nothing");
+    Ticker(std::string info = "Default ticker name");
     ~Ticker();
     /**
      * @brief 打印计时全过程对应的耗时数据
@@ -72,7 +78,7 @@ public:
      * 
      * @return std::uint64_t 返回上次打点到此次打点经过的时间(ms)
      */
-    std::uint64_t tick();
+    std::uint64_t tick(std::string msg = "");
 
     /**
      * @brief 获取花费时间最长的一个打点索引
@@ -94,12 +100,12 @@ private:
     static std::chrono::steady_clock::time_point getCurrTime();
 
     /**
-     * @brief 获取自上一次打点到此次打点经过的时间
+     * @brief 获取自上一次打点到此次打点经过的时间信息
      * 
-     * @param index 此次打点的索引
-     * @return std::uint64_t 经过的时间(ms)
+     * @param index 此次打点的索引: 从序号1开始
+     * @return std::pair<std::uint64_t, std::string> 经过的时间(ms)及描述
      */
-    std::uint64_t getTickElapsedTime(std::uint32_t index);
+    std::pair<std::uint64_t, std::string> getTickElapsedTimeInfo(std::uint32_t index);
 
 private:
     std::chrono::steady_clock::time_point startTime_; // 开始计时的时间
@@ -108,7 +114,10 @@ private:
 
     std::uint32_t count_ = 0; // 打点的次数
 
-    std::chrono::steady_clock::time_point counterTimes_[MAX_TICK_TIMES]; // 存储每次打点的时间
+    std::vector<TimeStampInfo_t> tickInfo_; // 存储每次打点的信息
 
-    std::string timerInfo_; // 计时器描述
+    std::string tickerInfo_; // 计时器描述
 };
+}
+
+#endif // INCLUDE_TOOLS_TICKER_H_
