@@ -68,6 +68,7 @@
 #include <vtkWidgetCallbackMapper.h>
 #include <vtkWidgetEvent.h>
 #include <vtkXMLPolyDataReader.h>
+#include <vtkSelectVisiblePoints.h>
 
 namespace
 {
@@ -177,18 +178,11 @@ int main(int argc, char* argv[]) {
     clipper->SetClipFunction(plane);
     clipper->InsideOutOn();
     clipper->SetInputConnection(sphereSource->GetOutputPort());
-
-
     // Create a mapper and actor.
     vtkNew<vtkPolyDataMapper> mapper;
     mapper->SetInputConnection(clipper->GetOutputPort());
     vtkNew<vtkActor> actor;
     actor->SetMapper(mapper);
-
-    vtkNew<vtkProperty> backFaces;
-    backFaces->SetDiffuseColor(colors->GetColor3d("Gold").GetData());
-
-    actor->SetBackfaceProperty(backFaces);
     actor->GetProperty()->SetEdgeVisibility(true);
     actor->GetProperty()->SetEdgeColor(0, 0, 0);
     // A renderer and render window.
@@ -202,17 +196,20 @@ int main(int argc, char* argv[]) {
 
     {
         // 显示节点标量值
+        vtkSmartPointer<vtkSelectVisiblePoints> visPts = vtkSmartPointer<vtkSelectVisiblePoints>::New();
+        visPts->SetInputConnection(clipper->GetOutputPort());
+        visPts->SetRenderer(renderer);
         vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
-        nodeLabelMapper->SetInputData(polyData);
+        nodeLabelMapper->SetInputConnection(visPts->GetOutputPort());
         nodeLabelMapper->SetFieldDataName("PointsIDSet");
         nodeLabelMapper->SetLabelModeToLabelFieldData();
-
         nodeLabelMapper->SetLabelFormat("%d");  // 设置格式为整数
         vtkSmartPointer<vtkActor2D> actor2D = vtkSmartPointer<vtkActor2D>::New();
         nodeLabelMapper->GetLabelTextProperty()->SetColor(0.0, 1.0, 0.0);
         actor2D->SetMapper(nodeLabelMapper);
         renderer->AddActor(actor2D);
     }
+
 
     // An interactor.
     vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
@@ -237,11 +234,6 @@ int main(int argc, char* argv[]) {
     planeWidget->SetRepresentation(rep);
 
     planeWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
-
-    renderer->GetActiveCamera()->Azimuth(-60);
-    renderer->GetActiveCamera()->Elevation(30);
-    renderer->ResetCamera();
-    renderer->GetActiveCamera()->Zoom(0.75);
 
     // Render and interact.
     vtkNew<InteractorStyle> style;

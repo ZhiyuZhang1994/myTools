@@ -105,6 +105,9 @@ int main(int, char*[])
 
     {
         // 显示节点标量值
+        vtkSmartPointer<vtkSelectVisiblePoints> visPts = vtkSmartPointer<vtkSelectVisiblePoints>::New();
+        visPts->SetInputData(polyData);
+        visPts->SetRenderer(renderer);
         vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
         nodeLabelMapper->SetInputData(polyData);
         nodeLabelMapper->SetFieldDataName("PointsIDSet");
