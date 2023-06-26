@@ -32,6 +32,35 @@
                 // 当然，如果任务分组是test，你就可以用run test task来运行 
 			},
 			// "detail": "编译器: D:\\Programs\\mingw-w64\\mingw64\\bin\\g++.exe"
-		}
+		},
+        {
+            "type": "shell",  // 任务类型：shell命令  mingw64
+            "label": "cmake",
+            "command": "C:/msys2/mingw64.exe",
+            "args": [  // 任务命令的参数：
+                "cmake .."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+        },
+        {
+            "type": "shell",  // 任务类型：shell命令
+            "label": "make",
+            "command": "C:/msys2/mingw64.exe", // 任务执行的命令： cmake
+            "args": [  // 任务命令的参数：
+                "cmake --build ."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+        },
+        {
+            "label": "build",
+            "dependsOn":[
+                "cmake",
+                "make"
+            ]
+        }
 	]
 }

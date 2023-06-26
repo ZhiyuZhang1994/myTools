@@ -99,6 +99,8 @@
     "codecvt": "cpp",
     "csignal": "cpp",
     "list": "cpp",
-    "numeric": "cpp"
+    "numeric": "cpp",
+    "cinttypes": "cpp",
+    "variant": "cpp"
 }
 }

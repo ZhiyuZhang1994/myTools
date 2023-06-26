@@ -107,11 +107,9 @@ int main()
     aBeamActor->AddPosition(0, 0, 0);
     aBeamActor->GetProperty()->SetColor(colors->GetColor3d("Yellow").GetData());
     aBeamActor->GetProperty()->SetOpacity(0.60);
-    aBeamActor->GetProperty()->EdgeVisibilityOn();
-    aBeamActor->GetProperty()->SetEdgeColor(
-        colors->GetColor3d("Black").GetData());
     aBeamActor->GetProperty()->SetLineWidth(1.5);
-
+    aBeamActor->GetProperty()->SetEdgeVisibility(true);
+    aBeamActor->GetProperty()->SetEdgeColor(0, 0, 0);
     // Create a plane to cut, here it cuts in the XZ direction
     // (xz normal=(1,0,0); XY =(0,0,1), YZ =(0,1,0)
     vtkNew<vtkPlane> plane;

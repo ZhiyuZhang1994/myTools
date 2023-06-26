@@ -5,7 +5,7 @@
     "configurations": [
         {
             "name": "test_code",  //  launch任务的名字：test_code
-            "preLaunchTask": "Build",  //在launch之前运行的任务名：这个名字一定要跟tasks.json中的任务名字大小写一致
+            "preLaunchTask": "build",  //在launch之前运行的任务名：这个名字一定要跟tasks.json中的任务名字大小写一致
             "type": "cppdbg",  // 配置类型：只能为cppdbg
             "request": "launch",  // 请求配置类型，可以为launch（启动）或attach（附加）
             "program": "${workspaceFolder}/build/bin/test.exe",  // 任务程序的路径名称：需要运行的是当前打开文件的目录中，名字和当前文件相同，但扩展名为exe的程序
