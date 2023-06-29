@@ -51,6 +51,12 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS} -g -std=c++11 -fPIC")
 
 # include_directories(${Boost_INCLUDE_DIRS})
 
+# 全局头文件包含
+include_directories(
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/third_party
+)
+
 add_subdirectory(third_party)
 add_subdirectory(src)
 

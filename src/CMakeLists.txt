@@ -1,7 +1,3 @@
-# 全局头文件包含
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/third_party)
-
 # 添加子目录
 add_subdirectory(tools)
 
