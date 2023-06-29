@@ -1,6 +1,7 @@
 /**
  * @brief 最新版本切块实现方案，采用vtkImplicitPlaneWidget2实现
- * 利用mapper的切平面实现节点的切割
+ * 用vtkClipDataSet实现数据的切块
+ * 用id的mapper中添加切平面实现节点编号的切割
  * @author zhangzhiyu
  * @date 2023-06-19
  */
