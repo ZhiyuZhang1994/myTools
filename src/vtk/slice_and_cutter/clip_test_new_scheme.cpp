@@ -2,6 +2,7 @@
  * @brief 最新版本切块实现方案，采用vtkImplicitPlaneWidget2实现
  * 用vtkClipDataSet实现数据的切块
  * 用id的mapper中添加切平面实现节点编号的切割
+ * 用特征边对象的mapper中添加切平面实现特征边(轮廓)的切割
  * @author zhangzhiyu
  * @date 2023-06-19
  */
@@ -70,6 +71,7 @@
 #include <vtkWidgetCallbackMapper.h>
 #include <vtkWidgetEvent.h>
 #include <vtkXMLPolyDataReader.h>
+#include <vtkFeatureEdges.h>
 
 namespace
 {
@@ -132,6 +134,9 @@ public:
         this->nodeLabelMapper_ = nodeLabelMapper;
     }
 
+    void SetFeatureEdgeActorMapper(vtkSmartPointer<vtkPolyDataMapper> featureEdgesMapper) {
+        this->featureEdgesMapper_ = featureEdgesMapper;
+    }
     /**
      * @brief 用于模拟切割完显示左边还是右边的按钮
      */
@@ -144,12 +149,16 @@ public:
                 clipper_->SetInsideOut(false);
                 nodeLabelMapper_->RemoveAllClippingPlanes();
                 nodeLabelMapper_->AddClippingPlane(plane_);
+                featureEdgesMapper_->RemoveAllClippingPlanes();
+                featureEdgesMapper_->AddClippingPlane(plane_);
                 break;
             case 's':
             case 'S': // 右侧
                 clipper_->SetInsideOut(true);
                 nodeLabelMapper_->RemoveAllClippingPlanes();
                 nodeLabelMapper_->AddClippingPlane(labelPlane_);
+                featureEdgesMapper_->RemoveAllClippingPlanes();
+                featureEdgesMapper_->AddClippingPlane(labelPlane_);
                 break;
 
             default:
@@ -166,6 +175,7 @@ private:
     vtkSmartPointer<vtkPlane> plane_ = vtkSmartPointer<vtkPlane>::New();
     vtkSmartPointer<vtkPlane> labelPlane_ = vtkSmartPointer<vtkPlane>::New();
     vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper_ = vtkSmartPointer<vtkLabeledDataMapper>::New();
+    vtkSmartPointer<vtkPolyDataMapper> featureEdgesMapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 };
 vtkStandardNewMacro(InteractorStyle);
 } // namespace
@@ -204,14 +214,9 @@ public:
         this->labelPlane_ = plane;
     }
 
-    void Set2DActorMapper(vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper) {
-        this->nodeLabelMapper_ = nodeLabelMapper;
-    }
-
 private:
     vtkSmartPointer<vtkPlane> plane_ = vtkSmartPointer<vtkPlane>::New();
     vtkSmartPointer<vtkPlane> labelPlane_ = vtkSmartPointer<vtkPlane>::New();
-    vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper_ = vtkSmartPointer<vtkLabeledDataMapper>::New();
 };
 
 int main(int argc, char* argv[]) {
@@ -253,7 +258,7 @@ int main(int argc, char* argv[]) {
     mapper->SetInputConnection(clipper->GetOutputPort());
     vtkNew<vtkActor> actor;
     actor->SetMapper(mapper);
-    actor->GetProperty()->SetEdgeVisibility(true);
+    actor->GetProperty()->SetEdgeVisibility(false);
     actor->GetProperty()->SetEdgeColor(0, 0, 0);
     renderer->AddActor(actor);
 
@@ -274,6 +279,25 @@ int main(int argc, char* argv[]) {
     actor2D->SetMapper(nodeLabelMapper);
     renderer->AddActor(actor2D);
 
+
+    // 使用vtkFeatureEdges过滤器提取非结构化网格的内部边线
+    vtkSmartPointer<vtkFeatureEdges> featureEdges = vtkSmartPointer<vtkFeatureEdges>::New();
+    featureEdges->SetInputConnection(sphereSource->GetOutputPort());
+    featureEdges->BoundaryEdgesOn();
+    featureEdges->FeatureEdgesOn();
+    featureEdges->ManifoldEdgesOn();
+    featureEdges->NonManifoldEdgesOn();
+    featureEdges->SetFeatureAngle(0); // 用于特征边(单元与单元接触边)的拾取与否
+    featureEdges->Update();
+    vtkSmartPointer<vtkPolyDataMapper> featureEdgesMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    featureEdgesMapper->SetInputData(featureEdges->GetOutput());
+    featureEdgesMapper->AddClippingPlane(labelPlane);
+    featureEdgesMapper->ScalarVisibilityOn();
+    vtkSmartPointer<vtkActor> featureEdgesActor = vtkSmartPointer<vtkActor>::New();
+    featureEdgesActor->SetMapper(featureEdgesMapper);
+    featureEdgesActor->GetProperty()->SetLineWidth(2);
+    featureEdgesActor->GetProperty()->SetColor(0, 0, 0); // 黑色
+    renderer->AddActor(featureEdgesActor);
 
     // The callback will do the work.
     vtkNew<vtkIPWCallback> myCallback;
@@ -300,6 +324,7 @@ int main(int argc, char* argv[]) {
     style->SetplaneWidget(planeWidget);
     style->SetCliper(clipper);
     style->Set2DActorMapper(nodeLabelMapper);
+    style->SetFeatureEdgeActorMapper(featureEdgesMapper);
     style->SetLabelPane(labelPlane); // 切节点编号的平面
     style->SetVtkPlane(plane);       // 切平面
     renderWindowInteractor->SetInteractorStyle(style);
