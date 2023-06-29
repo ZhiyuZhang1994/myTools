@@ -2,7 +2,7 @@
  * @brief 最新版本切块实现方案，采用vtkImplicitPlaneWidget2实现
  * 用vtkClipDataSet实现数据的切块
  * 用id的mapper中添加切平面实现节点编号的切割
- * 用轮廓对象的mapper中添加切平面实现轮廓的切割
+ * 用特征边对象的mapper中添加切平面实现特征边(轮廓)的切割
  * @author zhangzhiyu
  * @date 2023-06-19
  */
@@ -84,17 +84,15 @@ public:
     vtkTypeMacro(myVtkImplicitPlaneWidget, vtkImplicitPlaneWidget2);
     // 构造函数
     myVtkImplicitPlaneWidget() {
+        // 会覆盖掉基类中对vtkCommand::MouseMoveEvent设置的
         this->CallbackMapper->SetCallbackMethod(
-            vtkCommand::MouseMoveEvent, vtkWidgetEvent::Move, this, myVtkImplicitPlaneWidget::MoveaaAction);
+            vtkCommand::MouseMoveEvent, vtkWidgetEvent::Move, this, myVtkImplicitPlaneWidget::MoveAction);
     }
-    static void MoveaaAction(vtkAbstractWidget* w) {
+    static void MoveAction(vtkAbstractWidget* w) {
         // std::cout << "zzy" << std::endl;
         vtkImplicitPlaneWidget2::MoveAction(w);
     }
-
-private:
 };
-
 vtkStandardNewMacro(myVtkImplicitPlaneWidget);
 
 // Define interaction style
@@ -170,9 +168,7 @@ private:
     vtkSmartPointer<vtkPlane> labelPlane_ = vtkSmartPointer<vtkPlane>::New();
     vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper_ = vtkSmartPointer<vtkLabeledDataMapper>::New();
 };
-
 vtkStandardNewMacro(InteractorStyle);
-
 } // namespace
 
 // Callback for the interaction
@@ -190,7 +186,8 @@ public:
         vtkImplicitPlaneRepresentation* rep = reinterpret_cast<vtkImplicitPlaneRepresentation*>(planeWidget->GetRepresentation());
         rep->GetPlane(this->plane_);
 
-        if (1) { // 左侧不懂，右侧法向量相反
+        if (1) { // 左侧法向量相反，右侧不动
+            rep->GetPlane(this->labelPlane_);
             std::array<double, 3> normalXyz;
             rep->GetNormal(normalXyz.data());
             std::transform(normalXyz.begin(), normalXyz.end(), normalXyz.begin(), [](double each) { return -each; });
@@ -219,13 +216,20 @@ private:
 };
 
 int main(int argc, char* argv[]) {
+    // 基础设置
     vtkNew<vtkNamedColors> colors;
+    vtkNew<vtkRenderer> renderer;
+    renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
+    vtkNew<vtkRenderWindow> renderWindow;
+    renderWindow->AddRenderer(renderer);
+    renderWindow->SetWindowName("ImplicitPlaneWidget2");
+    vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+    renderWindowInteractor->SetRenderWindow(renderWindow);
 
     vtkNew<vtkSphereSource> sphereSource;
     sphereSource->SetRadius(10.0);
     sphereSource->Update();
     vtkPolyData* polyData = sphereSource->GetOutput();
-
     {
         // 点数据集添加属性：用于label拾取的属性
         auto count = polyData->GetNumberOfPoints(); // 16
@@ -243,7 +247,7 @@ int main(int argc, char* argv[]) {
     vtkNew<vtkPlane> plane;
     vtkSmartPointer<vtkClipPolyData> clipper = vtkSmartPointer<vtkClipPolyData>::New();
     clipper->SetClipFunction(plane);
-    clipper->SetInsideOut(false);
+    clipper->SetInsideOut(false); // 左侧
     clipper->SetInputConnection(sphereSource->GetOutputPort());
     // Create a mapper and actor.
     vtkNew<vtkPolyDataMapper> mapper;
@@ -252,24 +256,17 @@ int main(int argc, char* argv[]) {
     actor->SetMapper(mapper);
     actor->GetProperty()->SetEdgeVisibility(true);
     actor->GetProperty()->SetEdgeColor(0, 0, 0);
-    // A renderer and render window.
-    vtkNew<vtkRenderer> renderer;
-    vtkNew<vtkRenderWindow> renderWindow;
-    renderWindow->AddRenderer(renderer);
-    renderWindow->SetWindowName("ImplicitPlaneWidget2");
-
     renderer->AddActor(actor);
-    renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
 
     // 显示节点标量值
     vtkSmartPointer<vtkSelectVisiblePoints> visPts = vtkSmartPointer<vtkSelectVisiblePoints>::New();
-    visPts->SetInputConnection(clipper->GetOutputPort());
+    visPts->SetInputConnection(sphereSource->GetOutputPort());
     visPts->SetRenderer(renderer);
     vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
-    // nodeLabelMapper->SetInputConnection(visPts->GetOutputPort());
+    nodeLabelMapper->SetInputConnection(visPts->GetOutputPort());
     vtkSmartPointer<vtkPlane> labelPlane = vtkSmartPointer<vtkPlane>::New();
     nodeLabelMapper->AddClippingPlane(labelPlane);
-    nodeLabelMapper->SetInputData(polyData);
+    // nodeLabelMapper->SetInputData(polyData);
     nodeLabelMapper->SetFieldDataName("PointsIDSet");
     nodeLabelMapper->SetLabelModeToLabelFieldData();
     nodeLabelMapper->SetLabelFormat("%d"); // 设置格式为整数
@@ -278,9 +275,6 @@ int main(int argc, char* argv[]) {
     actor2D->SetMapper(nodeLabelMapper);
     renderer->AddActor(actor2D);
 
-    // An interactor.
-    vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
-    renderWindowInteractor->SetRenderWindow(renderWindow);
 
     // The callback will do the work.
     vtkNew<vtkIPWCallback> myCallback;
@@ -300,7 +294,6 @@ int main(int argc, char* argv[]) {
     vtkNew<myVtkImplicitPlaneWidget> planeWidget;
     planeWidget->SetInteractor(renderWindowInteractor);
     planeWidget->SetRepresentation(rep);
-
     planeWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
 
     // Render and interact.
@@ -310,15 +303,11 @@ int main(int argc, char* argv[]) {
     style->Set2DActorMapper(nodeLabelMapper);
     style->SetLabelPane(labelPlane); // 切节点编号的平面
     style->SetVtkPlane(plane);       // 切平面
-
     renderWindowInteractor->SetInteractorStyle(style);
     renderWindowInteractor->Initialize();
     renderWindow->Render();
     planeWidget->On();
-
-    // Begin mouse interaction.
     renderWindowInteractor->Start();
-    // 自定义交互方式+传参
 
     return EXIT_SUCCESS;
 }
