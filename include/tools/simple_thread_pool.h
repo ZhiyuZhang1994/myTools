@@ -6,8 +6,8 @@
  * @date 2022/08/18
  */
 
-#ifndef BEFEMLIB_THREAD_POOL_H
-#define BEFEMLIB_THREAD_POOL_H
+#ifndef INCLUDE_TOOLS_THREAD_POOL_H
+#define INCLUDE_TOOLS_THREAD_POOL_H
 
 #include "safe_queue.h"
 
@@ -129,4 +129,4 @@ private:
     std::string name_;
 };
 
-#endif //BEFEMLIB_THREAD_POOL_H
+#endif //INCLUDE_TOOLS_THREAD_POOL_H

@@ -219,7 +219,22 @@ private:
     vtkSmartPointer<vtkPlane> labelPlane_ = vtkSmartPointer<vtkPlane>::New();
 };
 
+class A {
+public:
+    void func() {
+        
+    }
+    int a = 2;
+};
+
 int main(int argc, char* argv[]) {
+    A a;
+    void* aPtr = &a;
+    // aPtr->func();
+    static_cast<A*>(aPtr)->func();
+
+
+
     // 基础设置
     vtkNew<vtkNamedColors> colors;
     vtkNew<vtkRenderer> renderer;

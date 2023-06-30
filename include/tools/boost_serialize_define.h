@@ -5,8 +5,8 @@
  * @date 2022-09-08
  */
 
-#ifndef BEFEMLIB_SUPPORT_BOOST_SERIALIZE_DEFINE
-#define BEFEMLIB_SUPPORT_BOOST_SERIALIZE_DEFINE
+#ifndef SUPPORT_BOOST_SERIALIZE_DEFINE
+#define SUPPORT_BOOST_SERIALIZE_DEFINE
 
 #include <boost/serialization/string.hpp>
 #include <boost/archive/text_oarchive.hpp>

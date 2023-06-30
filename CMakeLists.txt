@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
-project(Tutorial_Step1)
+project(MY_CPP_TOOLS)
 
 find_package(VTK COMPONENTS
 CommonColor
@@ -37,7 +37,7 @@ ImagingSources
 
 
 if (NOT VTK_FOUND)
-  message(FATAL_ERROR "Tutorial_Step1: Unable to find the VTK build folder.")
+  message(FATAL_ERROR "MY_CPP_TOOLS: Unable to find the VTK build folder.")
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

@@ -10,15 +10,15 @@ add_library(tools SHARED $<TARGET_OBJECTS:tool>)
 
 # 生成可执行文件
 # VTK 可执行文件
-# add_executable(Tutorial_Step1 MACOSX_BUNDLE ./vtk/change_layer/set_actor_layer_by_renderer.cpp)
-add_executable(Tutorial_Step1 MACOSX_BUNDLE ./temp_test.cpp)
+# add_executable(MY_CPP_TOOLS MACOSX_BUNDLE ./vtk/change_layer/set_actor_layer_by_renderer.cpp)
+add_executable(MY_CPP_TOOLS MACOSX_BUNDLE ./temp_test.cpp)
 
-# add_executable(Tutorial_Step1 MACOSX_BUNDLE ${source_list})
-TARGET_COMPILE_OPTIONS(Tutorial_Step1 PRIVATE -W -Wall -Wno-unused-value -Wno-unused-parameter)
+# add_executable(MY_CPP_TOOLS MACOSX_BUNDLE ${source_list})
+TARGET_COMPILE_OPTIONS(MY_CPP_TOOLS PRIVATE -W -Wall -Wno-unused-value -Wno-unused-parameter)
 
 
 # 添加链接库
-target_link_libraries(Tutorial_Step1 PRIVATE
+target_link_libraries(MY_CPP_TOOLS PRIVATE
     ${VTK_LIBRARIES}
     ${Boost_SERIALIZATION_LIBRARY_RELEASE}
     easylogginglib
@@ -38,6 +38,6 @@ ADD_CUSTOM_COMMAND(
 
 # vtk_module_autoinit is needed
 vtk_module_autoinit(
-  TARGETS Tutorial_Step1
+  TARGETS MY_CPP_TOOLS
   MODULES ${VTK_LIBRARIES}
 )
