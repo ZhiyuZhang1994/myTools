@@ -2,7 +2,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Build",  // 任务名字：Build  注意是大小写区分的，等会在launch中调用这个名字
+			"label": "build",  // 任务名字：Build  注意是大小写区分的，等会在launch中调用这个名字
 			"type": "shell",  // 任务类型：shell命令
 			"command": "g++.exe", // 任务执行的命令： g++
 			//"command": "D:\\Programs\\mingw-w64\\mingw64\\bin\\g++.exe", // 任务执行的命令： g++
@@ -15,7 +15,7 @@
 				// "'${workspaceFolder}\\source\\tools\\*'",  // 指定编译CPP路径：多文件项目需要
                 "src\\temp_test.cpp", //当前文件名
                 "-o", //对象名，不进行编译优化
-				"'${workspaceFolder}\\build\\bin\\test.exe'"
+				"'${workspaceFolder}\\build\\bin\\testCase.exe'"
 			],
 			// 所以以上部分，就是在shell中执行（假设文件名为filename.cpp）g++ -g filename.cpp -o bin/filename.exe
 			"options": {
@@ -33,34 +33,34 @@
 			},
 			// "detail": "编译器: D:\\Programs\\mingw-w64\\mingw64\\bin\\g++.exe"
 		},
-        {
-            "type": "shell",  // 任务类型：shell命令  mingw64
-            "label": "cmake",
-            "command": "C:/msys2/mingw64.exe",
-            "args": [  // 任务命令的参数：
-                "cmake .."
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
-        },
-        {
-            "type": "shell",  // 任务类型：shell命令
-            "label": "make",
-            "command": "C:/msys2/mingw64.exe", // 任务执行的命令： cmake
-            "args": [  // 任务命令的参数：
-                "cmake --build ."
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
-        },
-        {
-            "label": "build",
-            "dependsOn":[
-                "cmake",
-                "make"
-            ]
-        }
+        // {
+        //     "type": "shell",  // 任务类型：shell命令  mingw64
+        //     "label": "cmake",
+        //     "command": "C:/msys2/mingw64.exe",
+        //     "args": [  // 任务命令的参数：
+        //         "cmake .."
+        //     ],
+        //     "options": {
+        //         "cwd": "${workspaceFolder}/build"
+        //     },
+        // },
+        // {
+        //     "type": "shell",  // 任务类型：shell命令
+        //     "label": "make",
+        //     "command": "C:/msys2/mingw64.exe", // 任务执行的命令： cmake
+        //     "args": [  // 任务命令的参数：
+        //         "cmake --build ."
+        //     ],
+        //     "options": {
+        //         "cwd": "${workspaceFolder}/build"
+        //     },
+        // },
+        // {
+        //     "label": "build",
+        //     "dependsOn":[
+        //         "cmake",
+        //         "make"
+        //     ]
+        // }
 	]
 }
