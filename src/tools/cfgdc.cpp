@@ -11,6 +11,8 @@
 
 using namespace ZZY_TOOLS;
 
+#define ADD_MEMBER_FUNCTION_CALLBACK(subject, callback, ...)                            \
+    AddObserver(subject, this, callback, ##__VA_ARGS__);
 
 Subject_t ZZY_TEST = 100;
 
