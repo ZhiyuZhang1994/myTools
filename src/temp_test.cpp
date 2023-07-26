@@ -11,14 +11,56 @@
 
 using namespace ZZY_TOOLS;
 
-
 Subject_t ZZY_TEST = 100;
+
+
+class DataCenterMgr : public DataCenterMgrBase {
+public:
+    static DataCenterMgr* instance() {
+        static DataCenterMgr mgr;
+        return &mgr;
+    }
+
+    // 调用此成员函数，必然知道此函数对应的观察主题
+    void addData(std::uint32_t key, std::uint32_t value) {
+        auto dataIter = toBeMonitoredData_.find(key);
+        if (dataIter == toBeMonitoredData_.end()) {
+            toBeMonitoredData_[key] = {value};
+        } else {
+            dataIter->second.push_back(value);
+        }
+        auto& callbacks = callBacks_[ZZY_TEST];
+        for (auto& each : callbacks) {
+            (*each)(1, nullptr);
+        }
+    }
+
+private:
+    DataCenterMgr(){}
+    virtual ~DataCenterMgr(){}
+
+
+private:
+    std::unordered_map<std::uint32_t, std::vector<std::uint32_t>> toBeMonitoredData_;
+};
+
+
+template<class U, class T>
+void AddObserver(Subject_t subject, U observer,
+                          void (T::*callback)(Subject_t subject, Content_t content), std::uint32_t priority = 50) {
+    MemberFunctionCallback<T>* callable = new MemberFunctionCallback<T>(observer, callback);
+    DataCenterMgr::instance()->addObserver(subject, callable, priority);
+}
+
+#define ADD_MEMBER_FUNCTION_CALLBACK(subject, callback, ...)                            \
+    AddObserver(subject, this, callback, ##__VA_ARGS__);
+
 
 class A {
 public:
     A() {}
     void observer(Subject_t subject, Content_t message) {
-        std::cout << "receive subject: " << subject << "msg: " << message << std::endl;
+        std::cout << "receive subject: " << subject << std::endl;
     }
     void init() {
         ADD_MEMBER_FUNCTION_CALLBACK(ZZY_TEST, &A::observer);
@@ -30,5 +72,6 @@ public:
 int main() {
     A a;
     a.init();
+    DataCenterMgr::instance()->addData(1,2);
 }
 

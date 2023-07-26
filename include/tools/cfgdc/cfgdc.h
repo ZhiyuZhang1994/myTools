@@ -64,18 +64,20 @@ private:
 // 数据中心存储观察者的入口
 class DataCenterMgrBase {
 public:
-    static DataCenterMgrBase* instance() {
-        static DataCenterMgrBase mgr;
-        return &mgr;
-    }
-
     DataCenterMgrBase(){}
+    virtual ~DataCenterMgrBase(){}
 
     void addObserver(Subject_t subject, CallbackBase* callable, std::uint32_t priority) {
         // 根据subject查找对应的子mgr
+        auto callBacksIter = callBacks_.find(subject);
+        if (callBacksIter == callBacks_.end()) {
+            callBacks_[subject] = {callable};
+        } else {
+            callBacksIter->second.push_back(callable);
+        }
     }
 
-private:
+protected:
     std::unordered_map<Subject_t, std::vector<CallbackBase*>> callBacks_;
 };
 
@@ -89,12 +91,12 @@ private:
  * @param callback 回调函数的指针
  * @param priority 回调函数的优先级
  */
-template<class U, class T>
-void AddObserver(Subject_t subject, U observer,
-                          void (T::*callback)(Subject_t subject, Content_t content), std::uint32_t priority = 50) {
-    MemberFunctionCallback<T>* callable = new MemberFunctionCallback<T>(observer, callback);
-    DataCenterMgrBase::instance()->addObserver(subject, callable, priority);
-}
+// template<class U, class T>
+// void AddObserver(Subject_t subject, U observer,
+//                           void (T::*callback)(Subject_t subject, Content_t content), std::uint32_t priority = 50) {
+//     MemberFunctionCallback<T>* callable = new MemberFunctionCallback<T>(observer, callback);
+//     // DataCenterMgrBase::instance()->addObserver(subject, callable, priority);
+// }
 
 #define ADD_MEMBER_FUNCTION_CALLBACK(subject, callback, ...)                            \
     AddObserver(subject, this, callback, ##__VA_ARGS__);
