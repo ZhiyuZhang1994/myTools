@@ -4,15 +4,14 @@
  * @author zhiyu.zhang@cqbdri.pku.edu.cn
  * @date 2023-07-03
  */
-
 #include "tools/cfgdc/cfgdc.h"
 #include <utility>
 #include <iostream>
 
 using namespace ZZY_TOOLS;
 
-Subject_t ZZY_TEST = 100;
-
+Subject_t FIRST_SUBJECT = 100;
+Subject_t SECOND_SUBJECT = 101;
 
 class DataCenterMgr : public DataCenterMgrBase {
 public:
@@ -21,6 +20,7 @@ public:
         return &mgr;
     }
 
+    // ######################################业务接口###############################
     // 调用此成员函数，必然知道此函数对应的观察主题
     void addData(std::uint32_t key, std::uint32_t value) {
         auto dataIter = toBeMonitoredData_.find(key);
@@ -29,7 +29,7 @@ public:
         } else {
             dataIter->second.push_back(value);
         }
-        auto& callbacks = callBacks_[ZZY_TEST];
+        auto& callbacks = callBacks_[FIRST_SUBJECT];
         for (auto& each : callbacks) {
             (*each)(1, nullptr);
         }
@@ -56,6 +56,22 @@ void AddObserver(Subject_t subject, U observer,
     AddObserver(subject, this, callback, ##__VA_ARGS__);
 
 
+/**
+ * @brief 客户类A：关注时间
+ */
+class ClassA {
+public:
+    ClassA() {}
+    void observer(Subject_t subject, Content_t message) {
+        std::cout << "receive subject: " << subject << std::endl;
+    }
+    void init() {
+        ADD_MEMBER_FUNCTION_CALLBACK(FIRST_SUBJECT, &ClassA::observer);
+        // ADD_MEMBER_FUNCTION_CALLBACK(FIRST_SUBJECT, &A::observer, 20);
+    }
+
+};
+
 class A {
 public:
     A() {}
@@ -63,8 +79,8 @@ public:
         std::cout << "receive subject: " << subject << std::endl;
     }
     void init() {
-        ADD_MEMBER_FUNCTION_CALLBACK(ZZY_TEST, &A::observer);
-        // ADD_MEMBER_FUNCTION_CALLBACK(ZZY_TEST, &A::observer, 20);
+        ADD_MEMBER_FUNCTION_CALLBACK(FIRST_SUBJECT, &A::observer);
+        // ADD_MEMBER_FUNCTION_CALLBACK(FIRST_SUBJECT, &A::observer, 20);
     }
 
 };

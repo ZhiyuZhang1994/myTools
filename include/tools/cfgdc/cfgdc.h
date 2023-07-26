@@ -61,14 +61,34 @@ private:
 };
 
 
-// 数据中心存储观察者的入口
+
+/**
+ * @brief 数据中心基类，提供以下功能：
+ * 1、添加该数据中心对应主题的观察者
+ * 2、不提供删除观察者接口，认为观察一个数据变化是持续需要的
+ */
 class DataCenterMgrBase {
 public:
     DataCenterMgrBase(){}
-    virtual ~DataCenterMgrBase(){}
+    virtual ~DataCenterMgrBase() {
+        // 析构每一个观察者对象
+        for (auto& each : callBacks_) {
+            for (auto& each : each.second) {
+                delete each;
+                each = nullptr;
+            }
+        }
+        callBacks_.clear();
+    }
 
+    /**
+     * @brief 添加观察者
+     * 
+     * @param subject 主题
+     * @param callable 观察者对象
+     * @param priority 该观察者的优先级
+     */
     void addObserver(Subject_t subject, CallbackBase* callable, std::uint32_t priority) {
-        // 根据subject查找对应的子mgr
         auto callBacksIter = callBacks_.find(subject);
         if (callBacksIter == callBacks_.end()) {
             callBacks_[subject] = {callable};
