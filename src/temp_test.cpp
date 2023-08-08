@@ -1,93 +1,64 @@
 /**
- * @brief 配置数据中心：实现数据存储、数据订阅、转发功能
- * @brief 支持成员函数作为回调函数
- * @author zhiyu.zhang@cqbdri.pku.edu.cn
- * @date 2023-07-03
+ * @file 如何移动axis actor的位置到左下角
  */
-#include "tools/cfgdc/cfgdc.h"
-#include <utility>
-#include <iostream>
+#include <vtkActor.h>
+#include <vtkAxesActor.h>
+#include <vtkCamera.h>
+#include <vtkCaptionActor2D.h>
+#include <vtkNamedColors.h>
+#include <vtkNew.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkSphereSource.h>
+#include <vtkTextProperty.h>
+#include <vtkTransform.h>
+#include <vtkTextActor.h>
+#include <vtkOrientationMarkerWidget.h>
 
-using namespace ZZY_TOOLS;
+int main(int, char*[])
+{
+    // ————————————————————————————————初始设置操作
+    vtkNew<vtkNamedColors> colors;
+    // a renderer and render window
+    vtkNew<vtkRenderer> renderer;
+    renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
+    vtkNew<vtkRenderWindow> renderWindow;
+    renderWindow->SetWindowName("Axes");
+    renderWindow->AddRenderer(renderer);
+    renderWindow->SetSize(300, 300);
+    // an interactor
+    vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+    renderWindowInteractor->SetRenderWindow(renderWindow);
 
-Subject_t FIRST_SUBJECT = 100;
-Subject_t SECOND_SUBJECT = 101;
+    // ————————————————————————————————图显开始
+    // add the actors to the scene
+    vtkSmartPointer<vtkAxesActor> axis = vtkSmartPointer<vtkAxesActor>::New();
+    axis->GetXAxisCaptionActor2D()->GetTextActor()->SetTextScaleModeToNone();
+    axis->GetXAxisCaptionActor2D()->GetCaptionTextProperty()->SetFontSize(10);
+    axis->GetYAxisCaptionActor2D()->GetTextActor()->SetTextScaleModeToNone();
+    axis->GetYAxisCaptionActor2D()->GetCaptionTextProperty()->SetFontSize(10);
+    axis->GetZAxisCaptionActor2D()->GetTextActor()->SetTextScaleModeToNone();
+    axis->GetZAxisCaptionActor2D()->GetCaptionTextProperty()->SetFontSize(10);
+    axis->SetShaftTypeToCylinder();
+    axis->SetCylinderRadius(0.5 * axis->GetCylinderRadius());
+    // renderer->AddActor(axis);
 
-class DataCenterMgr : public DataCenterMgrBase {
-public:
-    static DataCenterMgr* instance() {
-        static DataCenterMgr mgr;
-        return &mgr;
-    }
-
-    // ######################################业务接口###############################
-    // 调用此成员函数，必然知道此函数对应的观察主题
-    void addData(std::uint32_t key, std::uint32_t value) {
-        auto dataIter = toBeMonitoredData_.find(key);
-        if (dataIter == toBeMonitoredData_.end()) {
-            toBeMonitoredData_[key] = {value};
-        } else {
-            dataIter->second.push_back(value);
-        }
-        auto& callbacks = callBacks_[FIRST_SUBJECT];
-        for (auto& each : callbacks) {
-            (*each)(1, nullptr);
-        }
-    }
-
-private:
-    DataCenterMgr(){}
-    virtual ~DataCenterMgr(){}
+    vtkSmartPointer<vtkOrientationMarkerWidget> axisWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+    axisWidget->SetOrientationMarker(axis);
+    axisWidget->SetInteractor(renderWindow->GetInteractor());
+    axisWidget->SetEnabled(true); // 显示与否
+    axisWidget->SetInteractive(false); // 不允许拖动
+    axisWidget->SetViewport(0, 0, 0.2, 0.2); // 相对位置
+    // 问题：绝对位置的接口如何设置？？？
 
 
-private:
-    std::unordered_map<std::uint32_t, std::vector<std::uint32_t>> toBeMonitoredData_;
-};
 
-
-template<class U, class T>
-void AddObserver(Subject_t subject, U observer,
-                          void (T::*callback)(Subject_t subject, Content_t content), std::uint32_t priority = 50) {
-    MemberFunctionCallback<T>* callable = new MemberFunctionCallback<T>(observer, callback);
-    DataCenterMgr::instance()->addObserver(subject, callable, priority);
+    // ————————————————————————————————渲染开始
+    renderer->ResetCamera();
+    renderWindow->Render();
+    renderWindowInteractor->Start();
+    return EXIT_SUCCESS;
 }
-
-#define ADD_MEMBER_FUNCTION_CALLBACK(subject, callback, ...)                            \
-    AddObserver(subject, this, callback, ##__VA_ARGS__);
-
-
-/**
- * @brief 客户类A：关注时间
- */
-class ClassA {
-public:
-    ClassA() {}
-    void observer(Subject_t subject, Content_t message) {
-        std::cout << "receive subject: " << subject << std::endl;
-    }
-    void init() {
-        ADD_MEMBER_FUNCTION_CALLBACK(FIRST_SUBJECT, &ClassA::observer);
-        // ADD_MEMBER_FUNCTION_CALLBACK(FIRST_SUBJECT, &A::observer, 20);
-    }
-
-};
-
-class A {
-public:
-    A() {}
-    void observer(Subject_t subject, Content_t message) {
-        std::cout << "receive subject: " << subject << std::endl;
-    }
-    void init() {
-        ADD_MEMBER_FUNCTION_CALLBACK(FIRST_SUBJECT, &A::observer);
-        // ADD_MEMBER_FUNCTION_CALLBACK(FIRST_SUBJECT, &A::observer, 20);
-    }
-
-};
-
-int main() {
-    A a;
-    a.init();
-    DataCenterMgr::instance()->addData(1,2);
-}
-
