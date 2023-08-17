@@ -34,22 +34,23 @@
 			// "detail": "编译器: D:\\Programs\\mingw-w64\\mingw64\\bin\\g++.exe"
 		},
         // {
-        //     "type": "shell",  // 任务类型：shell命令  mingw64
         //     "label": "cmake",
-        //     "command": "C:/msys2/mingw64.exe",
+        //     "type": "shell",  // 任务类型：shell命令  mingw64
+        //     "command": "C:/msys2/mingw64/bin/cmake.exe",
         //     "args": [  // 任务命令的参数：
-        //         "cmake .."
+        //         "..",
+        //         "-G",
+        //         "MinGW Makefiles"
         //     ],
         //     "options": {
-        //         "cwd": "${workspaceFolder}/build"
+        //         "cwd": "${workspaceFolder}/build",
         //     },
         // },
         // {
         //     "type": "shell",  // 任务类型：shell命令
         //     "label": "make",
-        //     "command": "C:/msys2/mingw64.exe", // 任务执行的命令： cmake
+        //     "command": "C:/msys2/mingw64/bin/c++.exe", // 任务执行的命令： ninja
         //     "args": [  // 任务命令的参数：
-        //         "cmake --build ."
         //     ],
         //     "options": {
         //         "cwd": "${workspaceFolder}/build"
@@ -57,6 +58,7 @@
         // },
         // {
         //     "label": "build",
+        //     "dependsOrder": "sequence", // 按列出的顺序执行任务依赖项
         //     "dependsOn":[
         //         "cmake",
         //         "make"
