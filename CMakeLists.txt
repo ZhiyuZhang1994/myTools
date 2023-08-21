@@ -6,8 +6,8 @@ project(MY_CPP_TOOLS)
 
 # 指定编译选项
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -std=c++11 -fPIC")
-# 展示所有编译单元所执行的指令
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# 展示所有编译单元所执行的指令 包括 Entering directory Leaving directory
+set(CMAKE_EXPORT_COMPILE_COMMANDS OFF)
 set(CMAKE_CXX_COMPILER "g++")
 # 启用颜色输出，默认为ON
 SET(CMAKE_COLOR_MAKEFILE ON)
