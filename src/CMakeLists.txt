@@ -49,8 +49,8 @@ aux_source_directory(. source_list)
 add_library(easylogging SHARED $<TARGET_OBJECTS:easylogging_obj>)
 
 # 生成可执行文件
-add_executable(testCase MACOSX_BUNDLE ./temp_test.cpp)
-# add_executable(MY_CPP_TOOLS MACOSX_BUNDLE ${source_list})
+# add_executable(testCase MACOSX_BUNDLE ./temp_test.cpp)
+add_executable(testCase ${source_list})
 
 # 指定target的编译选项
 TARGET_COMPILE_OPTIONS(testCase PRIVATE -W -Wall -Wno-unused-value -Wno-unused-parameter)
