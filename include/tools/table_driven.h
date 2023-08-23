@@ -30,6 +30,8 @@
 #include <map>
 #include <utility>
 
+namespace ZZY_TOOLS
+{
 template<class key, class func = std::function<void()>, class tbMap = std::map<key, func>>
 class TableDriven {
 public:
@@ -58,4 +60,6 @@ public:
 private:
     tbMap tableDrivenMap_;
 };
+
+}
 #endif

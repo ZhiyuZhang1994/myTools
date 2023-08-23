@@ -14,6 +14,9 @@
 #include <utility>
 #include <vector>
 
+namespace ZZY_TOOLS
+{
+
 class Timer {
 public:
     using CallbackType = std::function<void()>;
@@ -124,4 +127,5 @@ private:
     bool finish_ = false;
 };
 
+}
 #endif

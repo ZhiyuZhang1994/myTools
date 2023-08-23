@@ -12,6 +12,9 @@
 #include <memory>
 #include <mutex>
 
+namespace ZZY_TOOLS
+{
+
 using class_id_t = std::uint32_t;
 
 // 基类
@@ -111,4 +114,6 @@ public:
 #define GET_CLASS_PTR(class_name, class_id) \
     std::dynamic_pointer_cast<class_name>(class_repository::get_instance()->get_class_ptr(class_id))
 
-#endif
+}
+
+#endif // INCLUDE_TOOLS_CLASS_REGISTER

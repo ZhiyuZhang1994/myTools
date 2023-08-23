@@ -9,6 +9,9 @@
 #include <unordered_map>
 #include <vector>
 
+#ifndef TOOLS_CFGDC_CFGDC_H
+#define TOOLS_CFGDC_CFGDC_H
+
 namespace ZZY_TOOLS
 {
 
@@ -122,3 +125,5 @@ protected:
     AddObserver(subject, this, callback, ##__VA_ARGS__);
 
 } // namespace ZZY_TOOLS
+
+#endif

@@ -17,6 +17,8 @@
 #include <utility>
 #include <tuple>
 
+namespace ZZY_TOOLS
+{
 // 计算宏中参数个数，参考：https://wenku.baidu.com/view/c9fcb9cc142ded630b1c59eef8c75fbfc77d9433.html
 #define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _n, X...) _n
 #define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 8, 7, 6, 5, 4, 3, 2, 1, 0)
@@ -68,4 +70,6 @@
     inline bool operator==(const struct_name& left, const struct_name& right) { \
         return std::tie(left.val1, left.val2, left.val3) == std::tie(right.val1, right.val2, right.val3); \
     }
+}
+
 #endif

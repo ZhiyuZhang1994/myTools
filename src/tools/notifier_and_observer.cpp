@@ -13,7 +13,7 @@
 #include <vector>
 #include <string>
 
-namespace Observer_ZZY
+namespace ZZY_TOOLS
 {
 void SubjectContent::notify(std::string content) {
     auto observerCallbacks = ObserverContainer::getInstance().queryObserver(subject_);

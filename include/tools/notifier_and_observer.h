@@ -22,7 +22,7 @@
 #include <unordered_set>
 #include <mutex>
 
-namespace Observer_ZZY
+namespace ZZY_TOOLS
 {
 using Subject_t = std::uint32_t;
 using Content_t = std::string;
@@ -129,6 +129,6 @@ private:
     std::mutex subjectMutex_;
 };
 
-} // namespace Observer_ZZY
+} // namespace ZZY_TOOLS
 
 #endif

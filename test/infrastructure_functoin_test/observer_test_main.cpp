@@ -5,22 +5,22 @@
 #include <sstream>
 
 const std::string theme = "test_observer_func";
-const Observer_ZZY::Subject_t  subject = GENERATE_SUBJECT_CODE(theme);
+const ZZY_TOOLS::Subject_t  subject = GENERATE_SUBJECT_CODE(theme);
 
 class ObserverTestClass {
 public:
     void initialize() {
-        Observer_ZZY::Observer ob;
+        ZZY_TOOLS::Observer ob;
         // 证明一个主题可以有多个回调
-        handler = ob.attach(subject, [this](Observer_ZZY::Subject_t subject, Observer_ZZY::Content_t message) { 
+        handler = ob.attach(subject, [this](ZZY_TOOLS::Subject_t subject, ZZY_TOOLS::Content_t message) { 
             cb1(subject, message); }
         );
-        handler2 = ob.attach(subject, [this](Observer_ZZY::Subject_t subject, Observer_ZZY::Content_t message) { 
+        handler2 = ob.attach(subject, [this](ZZY_TOOLS::Subject_t subject, ZZY_TOOLS::Content_t message) { 
             cb2(subject, message); }
         );
     }
 
-    void cb1(Observer_ZZY::Subject_t subject, Observer_ZZY::Content_t message) {
+    void cb1(ZZY_TOOLS::Subject_t subject, ZZY_TOOLS::Content_t message) {
         int d2 = 0;
         double d4 = 0;
         DEFINE_MESSAGE_INPUT_WRAPPER(message);
@@ -30,7 +30,7 @@ public:
         std::cout <<  "message is " << d2 << " " << d4 << std::endl;
     }
 
-    void cb2(Observer_ZZY::Subject_t subject, Observer_ZZY::Content_t message) {
+    void cb2(ZZY_TOOLS::Subject_t subject, ZZY_TOOLS::Content_t message) {
         int d2 = 0;
         double d4 = 0;
         DEFINE_MESSAGE_INPUT_WRAPPER(message);
@@ -41,15 +41,15 @@ public:
     }
 
 
-    Observer_ZZY::CallbackHandler handler;
-    Observer_ZZY::CallbackHandler handler2;
+    ZZY_TOOLS::CallbackHandler handler;
+    ZZY_TOOLS::CallbackHandler handler2;
 };
 
 // 观察者机制使用案例
 void test_notifier_and_observer()
 {
     // 1、建立主题
-    Observer_ZZY::Notifier notifier;
+    ZZY_TOOLS::Notifier notifier;
     notifier.buildSubject(subject);
 
     // 2、观察主题
@@ -76,7 +76,7 @@ void test_notifier_and_observer()
 
     // 4、验证注销功能是否可用
     // 4.1、注销观察者
-    Observer_ZZY::Observer ob;
+    ZZY_TOOLS::Observer ob;
     ob.detach(subject, observerTest.handler);
     subjectContent->notify(message.str());
     // 4.2、注销主题：此时查询主题为空指针

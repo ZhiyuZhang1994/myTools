@@ -12,6 +12,8 @@
 #include <memory>
 #include <mutex>
 
+namespace ZZY_TOOLS
+{
 template<typename T>
 class SafeQueue {
 public:
@@ -79,4 +81,5 @@ private:
     std::shared_mutex mutex_;
 };
 
+}
 #endif // SAFE_QUEUE_H

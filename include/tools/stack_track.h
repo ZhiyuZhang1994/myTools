@@ -4,10 +4,15 @@
  * @date 2022-11-07
  */
 
+#ifndef INCLUDE_TOOLS_STACK_TRACE
+#define INCLUDE_TOOLS_STACK_TRACE
+
 #include <utility>
 #include <iostream>
 #include <vector>
 
+namespace ZZY_TOOLS
+{
 class StackTrace {
 public:
     static const std::uint16_t MAX_STACK = 64;
@@ -47,3 +52,6 @@ private:
 private:
     std::vector<StackTraceEntry> m_stack;
 };
+}
+
+#endif

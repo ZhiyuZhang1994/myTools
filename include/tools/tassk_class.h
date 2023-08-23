@@ -4,6 +4,10 @@
  * @date 2022-09-14
  */
 
+#ifndef INCLUDE_TOOLS_TASK_CLASS_H
+#define INCLUDE_TOOLS_TASK_CLASS_H
+
+
 #include "safe_queue.h"
 #include <thread>
 #include <atomic>
@@ -14,6 +18,8 @@
 #include <condition_variable>
 #include <iostream>
 
+namespace ZZY_TOOLS
+{
 class EndlessRunService {
 public:
     EndlessRunService(std::string serviceName);
@@ -92,3 +98,7 @@ void EndlessRunService::stop() {
         thread_.join();
     }
 }
+
+}
+
+#endif

@@ -21,6 +21,8 @@
 #include <utility>
 #include <vector>
 
+namespace ZZY_TOOLS
+{
 class ThreadPool : protected NonCopyable {
 private:
     class ThreadWorker {
@@ -129,4 +131,5 @@ private:
     std::string name_;
 };
 
+}
 #endif //INCLUDE_TOOLS_THREAD_POOL_H

@@ -9,7 +9,8 @@
 #include <iostream>
 
 ///////////////////////////////////Timer///////////////////////////////////////
-
+namespace ZZY_TOOLS
+{
 void Timer::start(uint64_t ms, CallbackType func, bool loop) {
     interval_ = ms;
     timerCallback_ = std::move(func);
@@ -131,4 +132,6 @@ void TimerManager::stop() {
         entry.timer->stop();
     }
     finish_ = true;
+}
+
 }

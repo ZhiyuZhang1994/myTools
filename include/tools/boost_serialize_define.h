@@ -16,6 +16,8 @@
 #include <functional>
 #include <string>
 
+namespace ZZY_TOOLS
+{
 using InputWrapper = boost::archive::text_iarchive;
 using OutputWrapper = boost::archive::text_oarchive;
 
@@ -26,5 +28,8 @@ using OutputWrapper = boost::archive::text_oarchive;
 #define DEFINE_MESSAGE_OUTPUT_WRAPPER(message) \
     std::stringstream message; \
     OutputWrapper message##Out(message)
+
+}
+
 
 #endif

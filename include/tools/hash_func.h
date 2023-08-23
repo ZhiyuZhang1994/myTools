@@ -8,6 +8,9 @@
 #include <string>
 #include <functional>
 
+namespace ZZY_TOOLS
+{
+
 class Hash {
 public:
     static std::uint32_t BKDRHash(const std::string& str)
@@ -27,4 +30,5 @@ public:
 #define GENERATE_SUBJECT_CODE(subjectName) Hash::BKDRHash(subjectName)
 #define GENERATE_SERVICE_ID(service) std::hash<std::string>()(service)
 
+}
 #endif

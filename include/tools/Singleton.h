@@ -10,6 +10,8 @@
 #include <utility>
 #include "construct_define.h"
 
+namespace ZZY_TOOLS
+{
 template<typename class_name>
 class Singleton
 {
@@ -59,4 +61,6 @@ public: \
     { \
         Singleton<class_name>::destory(); \
     }
+
+}
 #endif

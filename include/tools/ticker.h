@@ -19,6 +19,8 @@
 #include <utility>
 #include <vector>
 
+namespace ZZY_TOOLS
+{
 class Ticker {
 public:
     static const std::uint16_t MAX_TICK_TIMES = 500; // 最大的打点次数
@@ -145,5 +147,7 @@ private:
 
     TickTimeUnit unit_ = TickTimeUnit::MS;                                  // 默认输出单位
 };
+
+}
 
 #endif // INCLUDE_TOOLS_TICKER_H_

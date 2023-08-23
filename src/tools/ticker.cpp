@@ -7,6 +7,8 @@
 #include "tools/ticker.h"
 #include <iostream>
 
+namespace ZZY_TOOLS
+{
 const std::unordered_map<Ticker::TickTimeUnit, std::string> Ticker::UNIT_STRING {
     {TickTimeUnit::MS, "ms"},
     {TickTimeUnit::S, "s"},
@@ -149,4 +151,6 @@ std::uint32_t Ticker::getTickMinElapsedTimeIndex() {
         }
     }
     return result;
+}
+
 }

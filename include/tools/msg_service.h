@@ -4,6 +4,9 @@
  * @date 2022-09-14
  */
 
+#ifndef TOOLS_MSG_SERVICES_H
+#define TOOLS_MSG_SERVICES_H
+
 #include "safe_queue.h"
 #include "boost_serialize_define.h"
 #include "tools/hash_func.h"
@@ -20,6 +23,8 @@
 #include <condition_variable>
 #include <iostream>
 
+namespace ZZY_TOOLS
+{
 using Content_t = std::string;
 
 class MsgService {
@@ -97,3 +102,7 @@ private:
 
 #define GET_MESSAGE_SERVICE_PTR(class_name, serviceId) \
     std::dynamic_pointer_cast<class_name>(MsgServiceRepo::instance().getServicePtr(serviceId))
+
+}
+
+#endif

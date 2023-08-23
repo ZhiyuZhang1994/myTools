@@ -6,6 +6,9 @@
 
 #include "tools/msg_service.h"
 
+namespace ZZY_TOOLS
+{
+
 MsgService::MsgService(std::string serviceName) : serviceName_(serviceName) {}
 
 void MsgService::init() {
@@ -45,4 +48,6 @@ void MsgService::stop() {
 void MsgService::send_msg(Content_t message) {
     queue_.enqueue(message);
     cv.notify_one();
+}
+
 }
