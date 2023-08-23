@@ -5,9 +5,11 @@
  */
 
 #include "tools/msg_service.h"
+#include "tools/ticker.h"
 
 
 int main(int, char*[]) {
     ZZY_TOOLS::MsgService aa("1");
+    ZZY_TOOLS::Ticker aaa;
     return EXIT_SUCCESS;
 }

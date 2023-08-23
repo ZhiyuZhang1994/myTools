@@ -8,11 +8,7 @@
 #ifndef INCLUDE_TOOLS_NOTIFIER_AND_OBSERVER
 #define INCLUDE_TOOLS_NOTIFIER_AND_OBSERVER
 
-#include "boost_serialize_define.h"
-#include <boost/serialization/string.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/iostreams/stream.hpp>
+// #include "boost_serialize_define.h"
 #include <iostream>
 #include <functional>
 #include <string>

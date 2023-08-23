@@ -8,12 +8,8 @@
 #define TOOLS_MSG_SERVICES_H
 
 #include "safe_queue.h"
-#include "boost_serialize_define.h"
+// #include "boost_serialize_define.h"
 #include "tools/hash_func.h"
-#include <boost/serialization/string.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/iostreams/stream.hpp>
 #include <thread>
 #include <atomic>
 #include <mutex>
