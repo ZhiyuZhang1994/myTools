@@ -9,14 +9,35 @@
     "editor.mouseWheelZoom": true,
     // 4、显示bash输出窗
     "terminal.integrated.profiles.windows": {
-        "bash": {
+        "Git Bash": {
           // 自己的安装路径, 是bin下的bash.exe
           "path": "D:\\Programs\\Git\\bin\\bash.exe",
             // 使自定义命令的别名生效
-            "args": []
-        }
+            "args": [],
+            "overrideName": true,
+        },
+        "msys2": {
+          // 自己的安装路径, 是msys2下的msys2.exe
+          "path": "C:\\msys2\\msys2.exe",
+            // 使自定义命令的别名生效
+          "args": [],
+          "overrideName": true,
+        },
+        "mingw64": {
+          // 自己的安装路径, 是msys2下的mingw64.exe
+          "path": "C:\\msys2\\mingw64.exe",
+            // 使自定义命令的别名生效
+            "args": [],
+            "overrideName": true,
+        },
+        "msys2_bash_test": {
+            "path": "C:\\msys2\\usr\\bin\\bash.exe",
+            "icon": "terminal-debian",
+            "color": "terminal.ansiCyan",
+            "overrideName": true,
+        },
       },
-    "terminal.integrated.defaultProfile.windows": "bash",
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
     // 5、设置高亮文本显示
     "highlightwords.colors": [
       { "light": "#b3d9ff", "dark": "cyan" },
@@ -26,7 +47,7 @@
       { "light": "#ffb3ff", "dark": "cornflowerblue" },
       { "light": "#b3ffb3", "dark": "orange" },
       { "light": "#ffff80", "dark": "green" },
-      { "light": "#d1e0e0", "dark": "red" }
+      { "light": "#d1e0e0", "dark": "red" }                                        
     ],
     "highlightwords.box": {
         "light": false,
@@ -35,75 +56,104 @@
     "highlightwords.defaultMode": {
         "default": 0
     },
-    "highlightwords.showSidebar": {
-      "default": true
-  },
-  "files.associations": {
-    "array": "cpp",
-    "atomic": "cpp",
-    "*.tcc": "cpp",
-    "cctype": "cpp",
-    "clocale": "cpp",
-    "cmath": "cpp",
-    "cstdarg": "cpp",
-    "cstddef": "cpp",
-    "cstdint": "cpp",
-    "cstdio": "cpp",
-    "cstdlib": "cpp",
-    "cwchar": "cpp",
-    "cwctype": "cpp",
-    "deque": "cpp",
-    "unordered_map": "cpp",
-    "vector": "cpp",
-    "exception": "cpp",
-    "algorithm": "cpp",
-    "map": "cpp",
-    "memory": "cpp",
-    "memory_resource": "cpp",
-    "optional": "cpp",
-    "string": "cpp",
-    "string_view": "cpp",
-    "system_error": "cpp",
-    "tuple": "cpp",
-    "type_traits": "cpp",
-    "utility": "cpp",
-    "fstream": "cpp",
-    "initializer_list": "cpp",
-    "iosfwd": "cpp",
-    "iostream": "cpp",
-    "istream": "cpp",
-    "limits": "cpp",
-    "new": "cpp",
-    "ostream": "cpp",
-    "sstream": "cpp",
-    "stdexcept": "cpp",
-    "streambuf": "cpp",
-    "typeinfo": "cpp",
-    "functional": "cpp",
-    "iterator": "cpp",
-    "unordered_set": "cpp",
-    "queue": "cpp",
-    "chrono": "cpp",
-    "condition_variable": "cpp",
-    "ctime": "cpp",
-    "ratio": "cpp",
-    "mutex": "cpp",
-    "thread": "cpp",
-    "iomanip": "cpp",
-    "future": "cpp",
-    "set": "cpp",
-    "*.ipp": "cpp",
-    "shared_mutex": "cpp",
-    "cstring": "cpp",
-    "bitset": "cpp",
-    "codecvt": "cpp",
-    "csignal": "cpp",
-    "list": "cpp",
-    "numeric": "cpp",
-    "cinttypes": "cpp",
-    "variant": "cpp"
-},
-"cSpell.words": [
-    "zhangzhiyu"
-]
+    "workbench.iconTheme": "vscode-icons",
+    "editor.renderWhitespace": "all",
+    "explorer.confirmDelete": false,
+    "terminal.integrated.automationProfile.windows": {
+    
+
+        
+
+    },
+    "editor.detectIndentation": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "vsicons.dontShowNewVersionMessage": true,
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "workbench.editorAssociations": {
+        "*.pdf": "pdf.preview",
+        "*.bep": "default",
+        "*.dll": "default",
+        "*.ui": "default"
+    },
+    "cmake.configureOnOpen": true,
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "nsis.compiler.pathToMakensis": "D:\\Program Files (x86)\\NSIS\\makensis.exe",
+    "gitlens.views.commitDetails.files.layout": "list",
+    "Codegeex.Privacy": true,
+    "svg.preview.mode": "img",
+    "workbench.colorTheme": "Default Dark+",
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "right"
+    },
+    "debug.onTaskErrors": "debugAnyway",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "files.associations": {
+        "array": "cpp",
+        "atomic": "cpp",
+        "*.tcc": "cpp",
+        "bitset": "cpp",
+        "cctype": "cpp",
+        "chrono": "cpp",
+        "clocale": "cpp",
+        "cmath": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "cstdarg": "cpp",
+        "cstddef": "cpp",
+        "cstdint": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "cwchar": "cpp",
+        "cwctype": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "vector": "cpp",
+        "exception": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "map": "cpp",
+        "memory": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "optional": "cpp",
+        "ratio": "cpp",
+        "set": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "fstream": "cpp",
+        "future": "cpp",
+        "initializer_list": "cpp",
+        "iomanip": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "istream": "cpp",
+        "limits": "cpp",
+        "mutex": "cpp",
+        "new": "cpp",
+        "ostream": "cpp",
+        "shared_mutex": "cpp",
+        "sstream": "cpp",
+        "stdexcept": "cpp",
+        "streambuf": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp",
+        "typeinfo": "cpp",
+        "variant": "cpp"
+    },
 }
