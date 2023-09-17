@@ -31,3 +31,6 @@ zzy test begin . Current time: 2023/9/17
 zzy test end.
 zzy test begin . Current time: 2023/9/17
 zzy test end.
+zzy test begin . D:\work_station\befem_work_station\build\bin\\start_matlab.bat
+zzy test begin . D:\work_station\befem_work_station\build\bin\\start_matlab.bat
+zzy test begin . D:\work_station\befem_work_station\build\bin\plugin\scripts\\start_matlab.bat
