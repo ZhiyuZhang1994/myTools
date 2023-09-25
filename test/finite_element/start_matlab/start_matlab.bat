@@ -16,5 +16,11 @@ if exist "%file_to_delete%" (
     @REM echo file not exist. >> log.txt
 )
 
+@REM REM 使用where命令查找Matlab可执行文件
+@REM for /f "tokens=* delims=" %%i in ('where matlab.exe') do (
+@REM     set "matlab_path=%%i"
+@REM )
+
 rem 启动 MATLAB 并执行 a.m 脚本
-"D:\Program Files\MATLAB\R2023a\bin\matlab.exe" -nodesktop -minimize -nosplash -batch "run('%scriptPath%\compute_solution_by_matlab.m');exit;"
+@REM "%matlab_path%" -nodesktop -minimize -nosplash -batch "run('%scriptPath%\compute_solution_by_matlab.m');exit;"
+"%matlab_path%" -nodesktop -minimize -nosplash -batch "run('%scriptPath%\compute_solution_by_matlab.m');exit;"
