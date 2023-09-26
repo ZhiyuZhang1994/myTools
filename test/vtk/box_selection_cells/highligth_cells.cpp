@@ -1,5 +1,6 @@
 /**
  * @brief 基于官方文档的单元选取交互
+ * 当前代码利用vtkDataSetSurfaceFilter，显示的是表面单元，因此拾取的也是表面2D单元
  * @author zhiyu.zhang@cqbdri.pku.edu.cn
  * @date 2022-08-23
  */
