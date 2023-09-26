@@ -70,10 +70,15 @@ private:
  * 1、添加该数据中心对应主题的观察者
  * 2、不提供删除观察者接口，认为观察一个数据变化是持续需要的
  */
-class DataCenterMgrBase {
+class DataCenterMgr;
+
+class DataCenterBase {
 public:
-    DataCenterMgrBase(){}
-    virtual ~DataCenterMgrBase() {
+    DataCenterBase(){
+        DataCenterMgr::instance()->registerDataCenter(this);
+    }
+
+    virtual ~DataCenterBase() {
         // 析构每一个观察者对象
         for (auto& each : callBacks_) {
             for (auto& each : each.second) {
@@ -82,6 +87,15 @@ public:
             }
         }
         callBacks_.clear();
+    }
+
+    /**
+     * @brief 获取该数据中心的唯一编号
+     * 
+     * @return std::uint32_t 唯一编号
+     */
+    std::uint32_t getDataCenterId() const {
+        return dataCenterId_;
     }
 
     /**
@@ -100,29 +114,42 @@ public:
         }
     }
 
+    template<class U, class T>
+    void AddObserver(Subject_t subject, U observer,
+                          void (T::*callback)(Subject_t subject, Content_t content), std::uint32_t priority = 50) {
+        MemberFunctionCallback<T>* callable = new MemberFunctionCallback<T>(observer, callback);
+        addObserver(subject, callable, priority);
+    }
+
 protected:
+    std::uint32_t dataCenterId_ = 0;
     std::unordered_map<Subject_t, std::vector<CallbackBase*>> callBacks_;
 };
 
 /**
- * @brief 注册观察者回调函数的对外接口
- * 
- * @tparam U 回调函数所在的类类型的指针
- * @tparam T 回调函数所在的类类型
- * @param subject 订阅的主题
- * @param observer 回调函数所在的类实例的指针
- * @param callback 回调函数的指针
- * @param priority 回调函数的优先级
+ * @brief 管理所有的数据中心
  */
-// template<class U, class T>
-// void AddObserver(Subject_t subject, U observer,
-//                           void (T::*callback)(Subject_t subject, Content_t content), std::uint32_t priority = 50) {
-//     MemberFunctionCallback<T>* callable = new MemberFunctionCallback<T>(observer, callback);
-//     // DataCenterMgrBase::instance()->addObserver(subject, callable, priority);
-// }
+class DataCenterMgr {
+public:
+    static DataCenterMgr* instance() {
+        static DataCenterMgr mgr;
+        return &mgr;
+    }
 
-#define ADD_MEMBER_FUNCTION_CALLBACK(subject, callback, ...)                            \
-    AddObserver(subject, this, callback, ##__VA_ARGS__);
+    void registerDataCenter(DataCenterBase* dataCenter) {
+        dataCenters[dataCenter->getDataCenterId()] = dataCenter;
+    }
+
+    DataCenterBase* getDataCenter(std::uint32_t dataCenterId) {
+        return dataCenters[dataCenterId];
+    }
+
+private:
+    DataCenterMgr() = default;
+
+protected:
+    std::unordered_map<std::uint32_t, DataCenterBase*> dataCenters;
+};
 
 } // namespace ZZY_TOOLS
 
