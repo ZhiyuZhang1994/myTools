@@ -8,8 +8,8 @@
 #include "tools/cfgdc/cfgdc.h"
 #include <utility>
 #include <iostream>
-
-using namespace ZZY_TOOLS;
+namespace ZZY_TOOLS
+{
 
 
 /**
@@ -32,37 +32,36 @@ using namespace ZZY_TOOLS;
 // }
 
 
-
-
-#define ADD_MEMBER_FUNCTION_CALLBACK(subject, callback, ...)                            \
-    DataCenterBase* center = DataCenterMgr::instance()->getDataCenter(subject); \
-    center->AddObserver(subject, this, callback,  ##__VA_ARGS__);
-
-Subject_t ZZY_TEST = 0;
-
-class A {
-public:
-    A() {}
-    void observer(Subject_t subject, Content_t message) {
-        std::cout << "receive subject: " << subject << "msg: " << message << std::endl;
-    }
-    void init() {
-        ADD_MEMBER_FUNCTION_CALLBACK(ZZY_TEST, &A::observer);
-        // ADD_MEMBER_FUNCTION_CALLBACK(ZZY_TEST, &A::observer, 20);
-    }
-
-};
-
-
-class DataCenter : public DataCenterBase {
-public:
-    DataCenter() = default;
-};
-
-int main() {
-    DataCenter aaaa;
-
-    A a;
-    a.init();
+DataCenterBase::DataCenterBase() {
+    DataCenterMgr::instance()->registerDataCenter(this);
 }
 
+DataCenterBase::~DataCenterBase() {
+    // 析构每一个观察者对象
+    for (auto& each : callBacks_) {
+        for (auto& each : each.second) {
+            delete each;
+            each = nullptr;
+        }
+    }
+    callBacks_.clear();
+}
+
+std::uint32_t DataCenterBase::getDataCenterId() const {
+    return dataCenterId_;
+}
+
+void DataCenterBase::addObserver(Subject_t subject, CallbackBase* callable, std::uint32_t priority) {
+    std::cout << "zzy addObserver " << subject << std::endl;
+    auto callBacksIter = callBacks_.find(subject);
+    if (callBacksIter == callBacks_.end()) {
+        std::cout << "zzy ?" << subject << std::endl;
+        callBacks_[subject] = {callable};
+    } else {
+        std::cout << "zzy ??" << subject << std::endl;
+        callBacksIter->second.push_back(callable);
+    }
+    std::cout << "zzy addObserver111" << subject << std::endl;
+}
+
+} // namespace ZZY_TOOLS

@@ -74,29 +74,16 @@ class DataCenterMgr;
 
 class DataCenterBase {
 public:
-    DataCenterBase(){
-        DataCenterMgr::instance()->registerDataCenter(this);
-    }
+    DataCenterBase();
 
-    virtual ~DataCenterBase() {
-        // 析构每一个观察者对象
-        for (auto& each : callBacks_) {
-            for (auto& each : each.second) {
-                delete each;
-                each = nullptr;
-            }
-        }
-        callBacks_.clear();
-    }
+    virtual ~DataCenterBase();
 
     /**
      * @brief 获取该数据中心的唯一编号
      * 
      * @return std::uint32_t 唯一编号
      */
-    std::uint32_t getDataCenterId() const {
-        return dataCenterId_;
-    }
+    std::uint32_t getDataCenterId() const;
 
     /**
      * @brief 添加观察者
@@ -105,20 +92,24 @@ public:
      * @param callable 观察者对象
      * @param priority 该观察者的优先级
      */
-    void addObserver(Subject_t subject, CallbackBase* callable, std::uint32_t priority) {
-        auto callBacksIter = callBacks_.find(subject);
-        if (callBacksIter == callBacks_.end()) {
-            callBacks_[subject] = {callable};
-        } else {
-            callBacksIter->second.push_back(callable);
-        }
-    }
+    void addObserver(Subject_t subject, CallbackBase* callable, std::uint32_t priority);
 
     template<class U, class T>
     void AddObserver(Subject_t subject, U observer,
                           void (T::*callback)(Subject_t subject, Content_t content), std::uint32_t priority = 50) {
         MemberFunctionCallback<T>* callable = new MemberFunctionCallback<T>(observer, callback);
         addObserver(subject, callable, priority);
+    }
+
+    /**
+     * @brief 对不通过
+     * 
+     */
+    void notifyObserver() {
+        for (auto each : callBacks_[0]) {
+            std::uint32_t aa = 123;
+            each->operator()(0, &aa);
+        }
     }
 
 protected:
@@ -137,6 +128,7 @@ public:
     }
 
     void registerDataCenter(DataCenterBase* dataCenter) {
+        std::cout << "zzy registerDataCenter" << std::endl;
         dataCenters[dataCenter->getDataCenterId()] = dataCenter;
     }
 

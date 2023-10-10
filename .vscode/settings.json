@@ -9,7 +9,7 @@
     "editor.mouseWheelZoom": true,
     // 4、显示bash输出窗
     "terminal.integrated.profiles.windows": {
-        "Git Bash": {
+        "git_bash": {
           // 自己的安装路径, 是bin下的bash.exe
           "path": "D:\\Programs\\Git\\bin\\bash.exe",
             // 使自定义命令的别名生效
@@ -37,7 +37,7 @@
             "overrideName": true,
         },
       },
-    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "terminal.integrated.defaultProfile.windows": "git_bash",
     // 5、设置高亮文本显示
     "highlightwords.colors": [
       { "light": "#b3d9ff", "dark": "cyan" },
@@ -93,67 +93,154 @@
     "debug.onTaskErrors": "debugAnyway",
     "diffEditor.ignoreTrimWhitespace": false,
     "editor.unicodeHighlight.invisibleCharacters": false,
-    "files.associations": {
-        "array": "cpp",
-        "atomic": "cpp",
-        "*.tcc": "cpp",
-        "bitset": "cpp",
-        "cctype": "cpp",
-        "chrono": "cpp",
-        "clocale": "cpp",
-        "cmath": "cpp",
-        "codecvt": "cpp",
-        "condition_variable": "cpp",
-        "csignal": "cpp",
-        "cstdarg": "cpp",
-        "cstddef": "cpp",
-        "cstdint": "cpp",
-        "cstdio": "cpp",
-        "cstdlib": "cpp",
-        "cstring": "cpp",
-        "ctime": "cpp",
-        "cwchar": "cpp",
-        "cwctype": "cpp",
-        "deque": "cpp",
-        "list": "cpp",
-        "unordered_map": "cpp",
-        "unordered_set": "cpp",
-        "vector": "cpp",
-        "exception": "cpp",
-        "algorithm": "cpp",
-        "functional": "cpp",
-        "iterator": "cpp",
-        "map": "cpp",
-        "memory": "cpp",
-        "memory_resource": "cpp",
-        "numeric": "cpp",
-        "optional": "cpp",
-        "ratio": "cpp",
-        "set": "cpp",
-        "string": "cpp",
-        "string_view": "cpp",
-        "system_error": "cpp",
-        "tuple": "cpp",
-        "type_traits": "cpp",
-        "utility": "cpp",
-        "fstream": "cpp",
-        "future": "cpp",
-        "initializer_list": "cpp",
-        "iomanip": "cpp",
-        "iosfwd": "cpp",
-        "iostream": "cpp",
-        "istream": "cpp",
-        "limits": "cpp",
-        "mutex": "cpp",
-        "new": "cpp",
-        "ostream": "cpp",
-        "shared_mutex": "cpp",
-        "sstream": "cpp",
-        "stdexcept": "cpp",
-        "streambuf": "cpp",
-        "thread": "cpp",
-        "cinttypes": "cpp",
-        "typeinfo": "cpp",
-        "variant": "cpp"
-    },
+    "gerrit.auth.username": "zhangzy",
+    "gerrit.auth.password": "ocZkA7eGU0mzvCNlxoUZad8AXoalg6PtH6oEE2nA2A",
+    "gerrit.auth.url": "http://192.168.19.105/",
+    "gerrit.changesViews": [
+    
+        
+        {
+            "title": "Dashboard",
+            "panels": [
+                {
+                    "title": "Your Turn",
+                    "refreshInterval": 300,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "attention:self"
+                    ]
+                },
+                {
+                    "title": "Work In Progress",
+                    "refreshInterval": 300,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "is:open",
+                        "owner:self",
+                        "is:wip"
+                    ]
+                },
+                {
+                    "title": "Outgoing Reviews",
+                    "refreshInterval": 300,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "is:open",
+                        "owner:self",
+                        "-is:wip"
+                    ]
+                },
+                {
+                    "title": "Incoming Reviews",
+                    "refreshInterval": 300,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "is:open",
+                        "-owner:self",
+                        "-is:wip",
+                        "reviewer:self"
+                    ]
+                },
+                {
+                    "title": "CCed on",
+                    "refreshInterval": 300,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "is:open",
+                        "cc:self"
+                    ]
+                },
+                {
+                    "title": "Recently Closed",
+                    "refreshInterval": 1500,
+                    "defaultCollapsed": true,
+                    "initialFetchCount": 10,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "is:closed",
+                        "-is:wip OR owner:self",
+                        "owner:self OR reviewer:self OR cc:self"
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Starred",
+            "panels": [
+                {
+                    "title": "Starred",
+                    "refreshInterval": 500,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "is:starred"
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Watched",
+            "panels": [
+                {
+                    "title": "Watched",
+                    "refreshInterval": 500,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "is:watched",
+                        "is:open"
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Draft",
+            "panels": [
+                {
+                    "title": "Draft",
+                    "refreshInterval": 500,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "has:draft"
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "My Changes",
+            "panels": [
+                {
+                    "title": "My Changes",
+                    "refreshInterval": 500,
+                    "defaultCollapsed": false,
+                    "initialFetchCount": 25,
+                    "extraEntriesFetchCount": 25,
+                    "filters": [
+                        "is:open",
+                        "owner:self"
+                    ]
+                }
+            ]
+        }
+    ],
+    "gerrit.selectedView": "Dashboard",
+    "gerrit.expandComments": "always",
+    "gerrit.forceEnable": true,
+    "gerrit.quickCheckout.dropAllStashes": true,
+    "gerrit.quickCheckout.showInStatusBar": true,
+    "gerrit.streamEvents": true,
 }
