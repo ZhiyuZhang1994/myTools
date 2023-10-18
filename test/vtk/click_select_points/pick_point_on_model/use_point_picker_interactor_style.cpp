@@ -112,7 +112,7 @@ int main(int, char*[])
         visPts->SetInputData(polyData);
         visPts->SetRenderer(renderer);
         vtkSmartPointer<vtkLabeledDataMapper> nodeLabelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
-        nodeLabelMapper->SetInputData(polyData);
+        nodeLabelMapper->SetInputConnection(visPts->GetOutputPort());
         nodeLabelMapper->SetFieldDataName("PointsIDSet");
         nodeLabelMapper->SetLabelModeToLabelFieldData();
 
