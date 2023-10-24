@@ -1,3 +1,9 @@
+/**
+ * @brief 旋转scene中特定actor的方案
+ * @author zhiyu.zhang@cqbdri.pku.edu.cn
+ * @date 2023-10-20
+ */
+
 #include <vtkActor.h>
 #include <vtkAutoInit.h>
 #include <vtkAxesActor.h>
