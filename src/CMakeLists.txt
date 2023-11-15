@@ -15,6 +15,7 @@ find_package(VTK COMPONENTS
     FiltersSources
     InteractionStyle
     InteractionImage
+    FiltersModeling
 
     RenderingContextOpenGL2
     RenderingCore
@@ -35,6 +36,7 @@ find_package(VTK COMPONENTS
     CommonTransforms
     ImagingSources
 )
+
 if (NOT VTK_FOUND)
   message(FATAL_ERROR "project MY_CPP_TOOLS: Unable to find the VTK build folder.")
 endif()
@@ -66,6 +68,7 @@ target_link_libraries(testCase PRIVATE
 # 给target添加独有的包含目录
 TARGET_INCLUDE_DIRECTORIES(testCase PRIVATE
     # 头文件路径
+    ${PROJECT_SOURCE_DIR}/test
 )
 
 # 获取target的指定属性到变量中

@@ -25,94 +25,8 @@
 #include <vtkSphereSource.h>
 #include <vtkTransform.h>
 #include <vtkWorldPointPicker.h>
+#include "basic_interactor_style.h"
 
-
-class MouseInteractorStyle : public vtkInteractorStyleTrackballCamera {
-public:
-    static MouseInteractorStyle* New();
-    vtkTypeMacro(MouseInteractorStyle, vtkInteractorStyleTrackballCamera);
-
-    MouseInteractorStyle() {
-        point = vtkSmartPointer<vtkSphereSource>::New();
-        point->SetRadius(0.02);
-        mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        mapper->SetInputConnection(point->GetOutputPort());
-        actor = vtkSmartPointer<vtkActor>::New();
-        actor->GetProperty()->SetColor(1, 0, 0);
-        actor->SetMapper(mapper);
-    }
-
-    virtual void OnLeftButtonDown() override {
-        if (this->Interactor->GetAltKey()) {
-            int* pos = this->GetInteractor()->GetEventPosition();
-            std::cout << "Picking pixel: " << pos[0] << " " << pos[1] << std::endl;
-            auto picker = this->Interactor->GetPicker();
-            picker->Pick(pos[0], pos[1], 0, this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer());
-
-            this->Interactor->GetPicker()->GetPickPosition(picked);
-            actor->SetPosition(picked);
-            this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->AddActor(actor);
-            std::cout << "Picked value: " << picked[0] << " " << picked[1] << " " << picked[2] << std::endl;
-        }
-        vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
-    }
-
-    virtual void Rotate() override {
-        if (this->CurrentRenderer == nullptr) {
-            return;
-        }
-        vtkCamera* camera = this->CurrentRenderer->GetActiveCamera();
-        double position[3];
-        double focalPoint[3];
-        double viewUp[3];
-        camera->GetPosition(position);
-        camera->GetFocalPoint(focalPoint);
-        camera->GetViewUp(viewUp);
-        double axis[3];
-        axis[0] = -camera->GetViewTransformMatrix()->GetElement(0, 0);
-        axis[1] = -camera->GetViewTransformMatrix()->GetElement(0, 1);
-        axis[2] = -camera->GetViewTransformMatrix()->GetElement(0, 2);
-        vtkRenderWindowInteractor* rwi = this->Interactor;
-        int dx = rwi->GetEventPosition()[0] - rwi->GetLastEventPosition()[0];
-        int dy = rwi->GetEventPosition()[1] - rwi->GetLastEventPosition()[1];
-        const int* size = this->CurrentRenderer->GetRenderWindow()->GetSize();
-        double delta_elevation = -20.0 / size[1];
-        double delta_azimuth = -20.0 / size[0];
-        double rxf = dx * delta_azimuth * this->MotionFactor;
-        double ryf = dy * delta_elevation * this->MotionFactor;
-    
-        vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-        transform->Identity();
-        transform->Translate(this->picked[0], this->picked[1], this->picked[2]);
-        transform->RotateWXYZ(rxf, viewUp); // Azimuth
-        transform->RotateWXYZ(ryf, axis);   // Elevation
-        transform->Translate(-this->picked[0], -this->picked[1], -this->picked[2]);
-        double newPosition[3];
-        transform->TransformPoint(position, newPosition); // Transform Position
-        double newFocalPoint[3];
-        transform->TransformPoint(focalPoint, newFocalPoint); // Transform Focal Point
-
-        camera->SetPosition(newPosition);
-        camera->SetFocalPoint(newFocalPoint);
-        camera->OrthogonalizeViewUp();
-
-        if (this->AutoAdjustCameraClippingRange) {
-            this->CurrentRenderer->ResetCameraClippingRange();
-        }
-        if (rwi->GetLightFollowCamera()) {
-            this->CurrentRenderer->UpdateLightsGeometryToFollowCamera();
-        }
-        rwi->Render();
-    }
-
-private:
-    vtkSmartPointer<vtkSphereSource> point = nullptr;
-    vtkSmartPointer<vtkPolyDataMapper>mapper = nullptr;
-    vtkSmartPointer<vtkActor> actor = nullptr;
-    double picked[3];
-};
-
-vtkStandardNewMacro(MouseInteractorStyle);
 
 int main(int, char*[]) {
     vtkNew<vtkNamedColors> colors;
@@ -142,9 +56,11 @@ int main(int, char*[]) {
     // Add the actor to the scene
     renderer->AddActor(axes);
 
-    vtkNew<MouseInteractorStyle> style;
+    vtkNew<BasicInteractorStyle> style;
     renderWindowInteractor->SetInteractorStyle(style);
-    std::cout << style->GetState() << std::endl;
+    style->SetDefaultRenderer(renderer);
+    auto data = source->GetOutput();
+    style->setDataSource(data);
 
     // Render and interact
     renderWindow->Render();
