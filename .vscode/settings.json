@@ -9,7 +9,7 @@
     "editor.mouseWheelZoom": true,
     // 4、显示bash输出窗
     "terminal.integrated.profiles.windows": {
-        "git_bash": {
+        "Git-Bash": {
           // 自己的安装路径, 是bin下的bash.exe
           "path": "D:\\Programs\\Git\\bin\\bash.exe",
             // 使自定义命令的别名生效
@@ -37,7 +37,7 @@
             "overrideName": true,
         },
       },
-    "terminal.integrated.defaultProfile.windows": "git_bash",
+    "terminal.integrated.defaultProfile.windows": "Git-Bash",
     // 5、设置高亮文本显示
     "highlightwords.colors": [
       { "light": "#b3d9ff", "dark": "cyan" },

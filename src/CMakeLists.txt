@@ -1,6 +1,3 @@
-# 添加子目录
-add_subdirectory(tools)
-
 # 查找需要的第三方库
 find_package(VTK COMPONENTS
     CommonColor
@@ -43,6 +40,14 @@ endif()
 
 # 查找外部的boost库
 find_package(Boost 1.67 COMPONENTS serialization REQUIRED)
+list(APPEND CMAKE_PREFIX_PATH "D:/Program Files/Python311/Lib") # 安装路径前缀
+
+# Find Python
+find_package(Python3 COMPONENTS Development)
+
+# 添加子目录
+add_subdirectory(tools)
+
 
 # 获取当前文件夹下cpp
 aux_source_directory(. source_list)

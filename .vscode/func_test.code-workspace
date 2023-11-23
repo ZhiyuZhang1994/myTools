@@ -10,12 +10,12 @@
     "settings": {
         "files.autoSave": "onFocusChange",
         "terminal.integrated.profiles.windows": {
-            "bash": {
+            "Git-Bash": {
                 "path": "D:\\Programs\\Git\\bin\\bash.exe",
                 "args": []
             }
         },
-        "terminal.integrated.defaultProfile.windows": "bash",
+        "terminal.integrated.defaultProfile.windows": "Git-Bash",
         "highlightwords.colors": [
             {
                 "light": "#b3d9ff",
@@ -135,6 +135,7 @@
             "variant": "cpp",
             "*.in": "cpp",
             "source_location": "cpp"
-        }
+        },
+        "gerrit.gitRepo": "d:\\work_station\\github_project\\func_test"
     }
 }
