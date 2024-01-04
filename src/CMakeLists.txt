@@ -41,9 +41,9 @@ endif()
 # 查找外部的boost库
 find_package(Boost 1.67 COMPONENTS serialization REQUIRED)
 list(APPEND CMAKE_PREFIX_PATH "D:/Program Files/Python311/Lib") # 安装路径前缀
-
+# list(APPEND CMAKE_PREFIX_PATH "D:/Program Files/Python311/Lib/site-packages/pybind11/share/cmake/pybind11") # 安装路径前缀
 # Find Python
-find_package(Python3 COMPONENTS Development)
+find_package(Python3 COMPONENTS Development REQUIRED)
 
 # 添加子目录
 add_subdirectory(tools)

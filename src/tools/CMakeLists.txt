@@ -3,7 +3,7 @@ aux_source_directory(. source_list)
 
 # 生成动态库tools
 add_library(tools SHARED ${source_list})
-
+# pybind11_add_module(py2cpp wrapper_cpp_to_py.cpp)
 
 # 给target添加独有的链接库
 target_link_libraries(tools PRIVATE
