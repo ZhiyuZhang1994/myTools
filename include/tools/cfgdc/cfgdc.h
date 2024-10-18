@@ -8,6 +8,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include <cstdint>
 
 #ifndef TOOLS_CFGDC_CFGDC_H
 #define TOOLS_CFGDC_CFGDC_H
@@ -18,7 +19,7 @@ namespace ZZY_TOOLS
 /**
  * @brief 类成员函数作为回调函数的管理类
  */
-using Subject_t = std::uint32_t;
+using Subject_t = uint32_t;
 using Content_t = const void*; // 标识为const提示客户不可修改消息内容
 
 

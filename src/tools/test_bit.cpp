@@ -6,6 +6,7 @@
 
 #include <utility>
 #include <iostream>
+#include <cstdint>
 
 
 // 注：不要对非整型数进行bit位测试
