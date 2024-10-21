@@ -9,6 +9,7 @@
 #include <Spectra/MatOp/SymShiftInvert.h>
 #include <Spectra/MatOp/SparseSymMatProd.h>
 #include <iostream>
+#include <Spectra/MatOp/SparseCholesky.h>
 
 using namespace Spectra;
 
@@ -19,9 +20,11 @@ using Triplet = Eigen::Triplet<double>;
 
 // 153630 20W网格自由模态
 // 18618 2W网格约束模态
+int dim_zzy = 18618;
+
 int main() {
     std::vector<Triplet> coefficients;            // list of non-zeros coefficients
-    std::ifstream infile("K.mtx");
+    std::ifstream infile("K.dat");
     if (!infile) {
         std::cerr << "无法打开文件!" << std::endl;
         return 1;
@@ -31,11 +34,12 @@ int main() {
     while (infile >> a >> b >> c) {
         coefficients.emplace_back(a - 1, b - 1, c);
     }
-    SpMat matK(153630, 153630);
+    SpMat matK(dim_zzy, dim_zzy);
     matK.setFromTriplets(coefficients.begin(), coefficients.end());
     infile.close();
+    coefficients.clear();
 
-    std::ifstream infileM("M.mtx");
+    std::ifstream infileM("M.dat");
     if (!infileM) {
         std::cerr << "无法打开文件!" << std::endl;
         return 1;
@@ -43,18 +47,25 @@ int main() {
     while (infileM >> a >> b >> c) {
         coefficients.emplace_back(a - 1, b - 1, c);
     }
-    SpMat matM(153630, 153630);
+    SpMat matM(dim_zzy, dim_zzy);
     matM.setFromTriplets(coefficients.begin(), coefficients.end());
     infileM.close();
+    coefficients.clear();
     std::cout << "read file finished" << std::endl;
+
     using OpType = SymShiftInvert<double, Eigen::Sparse, Eigen::Sparse>;
+    // SparseSymMatProd<double> op(matK);
+    // SparseCholesky
     using BOpType = SparseSymMatProd<double>;
+    // using BOpType = SparseCholesky<double>; // 2
+
     OpType op(matK, matM);
     BOpType Bop(matK);
     SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> geigs(op, Bop, 20, 40, 1.0);
+    // SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> geigs(op, Bop, 20, 40); // 2
     geigs.init();
-    // int nconv = geigs.compute(SortRule::LargestAlge, 1000, 1e-10, SortRule::SmallestMagn);
-    int nconv = geigs.compute(SortRule::LargestAlge);
+    int nconv = geigs.compute(SortRule::LargestAlge, 1000, 1e-10, SortRule::SmallestMagn);
+    // int nconv = geigs.compute(SortRule::SmallestMagn);
  
     // Retrieve results
     Eigen::VectorXd evalues;
@@ -63,67 +74,19 @@ int main() {
         std::cout << "zzy !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!successful" << std::endl;
         evalues = geigs.eigenvalues();
         evecs = geigs.eigenvectors();
+    } else {
+        std::cout << "zzy -----------------------------failed" << std::endl;
     }
     std::cout << "Number of converged generalized eigenvalues: " << nconv << std::endl;
     std::cout << "Generalized eigenvalues found:\n" << evalues << std::endl;
     // std::cout << "Generalized eigenvectors found:\n" << evecs.topRows(10) << std::endl;
  
 
+    // SymGEigsSolver GEigsMode::Cholesky SparseCholesky
 
 
-    // // ###########################################################################################################
-    // // We are going to solve the generalized eigenvalue problem
-    // //     A * x = lambda * B * x,
-    // // where A is symmetric and B is positive definite
-    // const int n = 100;
- 
-    // // Define the A matrix
-    // Eigen::MatrixXd M = Eigen::MatrixXd::Random(n, n);
-    // Eigen::MatrixXd A = M + M.transpose();
- 
-    // // Define the B matrix, a tridiagonal matrix with 2 on the diagonal
-    // // and 1 on the subdiagonals
-    // Eigen::SparseMatrix<double> B(n, n);
-    // B.reserve(Eigen::VectorXi::Constant(n, 3));
-    // for (int i = 0; i < n; i++)
-    // {
-    //     B.insert(i, i) = 2.0;
-    //     if (i > 0)
-    //         B.insert(i - 1, i) = 1.0;
-    //     if (i < n - 1)
-    //         B.insert(i + 1, i) = 1.0;
-    // }
- 
-    // // Construct matrix operation objects using the wrapper classes
-    // // A is dense, B is sparse
-    // using OpType = SymShiftInvert<double, Eigen::Dense, Eigen::Sparse>;
-    // using BOpType = SparseSymMatProd<double>;
-    // OpType op(A, B);
-    // BOpType Bop(B);
- 
-    // // Construct generalized eigen solver object, seeking three generalized
-    // // eigenvalues that are closest to zero. This is equivalent to specifying
-    // // a shift sigma = 0.0 combined with the SortRule::LargestMagn selection rule
-    // SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert>
-    //     geigs(op, Bop, 3, 6, 0.0);
- 
-    // // Initialize and compute
-    // geigs.init();
-    // int nconv = geigs.compute(SortRule::LargestMagn);
- 
-    // // Retrieve results
-    // Eigen::VectorXd evalues;
-    // Eigen::MatrixXd evecs;
-    // if (geigs.info() == CompInfo::Successful)
-    // {
-    //     evalues = geigs.eigenvalues();
-    //     evecs = geigs.eigenvectors();
-    // }
- 
-    // std::cout << "Number of converged generalized eigenvalues: " << nconv << std::endl;
-    // std::cout << "Generalized eigenvalues found:\n" << evalues << std::endl;
-    // std::cout << "Generalized eigenvectors found:\n" << evecs.topRows(10) << std::endl;
- 
+
+
     return 0;
 
 }
