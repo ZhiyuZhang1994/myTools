@@ -10,6 +10,7 @@
 #include <Spectra/MatOp/SparseSymMatProd.h>
 #include <iostream>
 #include <Spectra/MatOp/SparseCholesky.h>
+#include <Spectra/SymGEigsSolver.h>
 
 using namespace Spectra;
 
@@ -53,18 +54,18 @@ int main() {
     coefficients.clear();
     std::cout << "read file finished" << std::endl;
 
-    using OpType = SymShiftInvert<double, Eigen::Sparse, Eigen::Sparse>;
+    using OpType = SparseSymMatProd<double>;
     // SparseSymMatProd<double> op(matK);
     // SparseCholesky
-    using BOpType = SparseSymMatProd<double>;
-    // using BOpType = SparseCholesky<double>; // 2
+    // using BOpType = SparseSymMatProd<double>;
+    using BOpType = SparseCholesky<double>; // 2
 
-    OpType op(matK, matM);
-    BOpType Bop(matK);
-    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> geigs(op, Bop, 20, 40, 1.0);
-    // SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> geigs(op, Bop, 20, 40); // 2
+    OpType op(matK);
+    BOpType Bop(matM);
+    // SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> geigs(op, Bop, 20, 40, 1.0);
+    SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> geigs(op, Bop, 20, 40); // 2
     geigs.init();
-    int nconv = geigs.compute(SortRule::LargestAlge, 1000, 1e-10, SortRule::SmallestMagn);
+    int nconv = geigs.compute(SortRule::SmallestAlge , 1000, 1e-10, SortRule::SmallestMagn);
     // int nconv = geigs.compute(SortRule::SmallestMagn);
  
     // Retrieve results
@@ -76,6 +77,9 @@ int main() {
         evecs = geigs.eigenvectors();
     } else {
         std::cout << "zzy -----------------------------failed" << std::endl;
+    }
+    for (auto each : evalues) {
+        std::cout << sqrt(each) / 2 / M_PI << std::endl;
     }
     std::cout << "Number of converged generalized eigenvalues: " << nconv << std::endl;
     std::cout << "Generalized eigenvalues found:\n" << evalues << std::endl;
