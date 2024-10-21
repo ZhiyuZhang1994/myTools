@@ -31,6 +31,9 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/third_party/easylogging/include
     ${PROJECT_SOURCE_DIR}/include/pybind11
+    ${PROJECT_SOURCE_DIR}/include/3rd/eigen3
+    ${PROJECT_SOURCE_DIR}/include/3rd
+
     # ${Boost_INCLUDE_DIRS}
 )
 
