@@ -310,6 +310,7 @@
         "variant": "cpp",
         "random": "cpp",
         "core": "cpp",
-        "sparsecore": "cpp"
+        "sparsecore": "cpp",
+        "dense": "cpp"
     },
 }

@@ -1,6 +1,7 @@
 /**
- * @brief ShiftInvert求特征值
- * @brief 20W自由模态前20阶完全正确
+ * @brief SparseCholesky分解求特征值
+ * 1) RegularInverse求特征值不好用
+ * @brief 2W约束模态前20阶完全正确
  * @date 2024-10-22
  */
 #include <Eigen/Dense>
@@ -30,7 +31,7 @@ using Triplet = Eigen::Triplet<double>;
 // 150165 20W网格约束模态
 // 167424 20W网格自由模态六面体
 int dim_zzy = 153630;
-std::uint32_t para = 0;
+std::uint32_t para = 1e5;
 
 int main() {
     std::vector<Triplet> coefficients;            // list of non-zeros coefficients
@@ -64,18 +65,18 @@ int main() {
     std::cout << "read file finished" << std::endl;
 
     matK = matK + para * matM;
-    using OpType = SymShiftInvert<double>;
+    using OpType = SparseSymMatProd<double>;
     // SparseSymMatProd<double> op(matK);
     // SparseCholesky
     // using BOpType = SparseSymMatProd<double>;
-    using BOpType = SparseSymMatProd<double>; // 2
+    using BOpType = SparseCholesky<double>; // 2
 
-    OpType op(matK, matM);
+    OpType op(matK);
     BOpType Bop(matM);
     // SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> geigs(op, Bop, 20, 40, 1.0);
-    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> geigs(op, Bop, 20, 400, 0); // 2
+    SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> geigs(op, Bop, 20, 40); // 2
     geigs.init();
-    int nconv = geigs.compute(SortRule::LargestMagn , 1000, 1e-3, SortRule::SmallestMagn);
+    int nconv = geigs.compute(SortRule::SmallestAlge , 1000, 1e-10, SortRule::SmallestMagn);
     // int nconv = geigs.compute(SortRule::SmallestMagn);
  
     // Retrieve results
@@ -89,7 +90,7 @@ int main() {
     evalues = geigs.eigenvalues();
     evecs = geigs.eigenvectors();
     for (auto each : evalues) {
-        std::cout << sqrt(each - para) / 2.0 / M_PI << std::endl;
+        std::cout << sqrt(each - para) / 2 / M_PI << std::endl;
     }
     std::cout << "Number of converged generalized eigenvalues: " << nconv << std::endl;
     std::cout << "Generalized eigenvalues found:\n" << evalues << std::endl;
