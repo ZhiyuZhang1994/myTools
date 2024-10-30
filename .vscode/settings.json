@@ -37,7 +37,7 @@
             "overrideName": true,
         },
       },
-    "terminal.integrated.defaultProfile.windows": "Git-Bash",
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
     // 5、设置高亮文本显示
     "highlightwords.colors": [
       { "light": "#b3d9ff", "dark": "cyan" },
@@ -311,6 +311,7 @@
         "random": "cpp",
         "core": "cpp",
         "sparsecore": "cpp",
-        "dense": "cpp"
+        "dense": "cpp",
+        "eigenvalues": "cpp"
     },
 }

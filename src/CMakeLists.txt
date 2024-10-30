@@ -45,6 +45,9 @@ list(APPEND CMAKE_PREFIX_PATH "D:/Program Files/Python311/Lib") # 安装路径�
 # Find Python
 find_package(Python3 COMPONENTS Development REQUIRED)
 
+# 查找 OpenMP
+find_package(OpenMP REQUIRED)
+
 # 添加子目录
 add_subdirectory(tools)
 
@@ -69,6 +72,11 @@ target_link_libraries(testCase PRIVATE
     easylogging
     tools
 )
+
+if(OpenMP_CXX_FOUND)
+    message(STATUS "OpenMP_CXX_FOUND: ${OpenMP_CXX_FOUND}")
+    target_link_libraries(testCase PRIVATE OpenMP::OpenMP_CXX)
+endif()
 
 # 给target添加独有的包含目录
 TARGET_INCLUDE_DIRECTORIES(testCase PRIVATE

@@ -1,6 +1,7 @@
 /**
- * @brief ShiftInvert求特征值
- * @brief 20W自由模态前20阶完全正确
+ * @brief SparseCholesky分解求特征值
+ * 1) RegularInverse求特征值不好用
+ * @brief 2W约束模态前20阶完全正确
  * @date 2024-10-22
  */
 #include <Eigen/Dense>
@@ -16,7 +17,8 @@
 #include <iostream>
 #include <Spectra/MatOp/SparseCholesky.h>
 #include <Spectra/SymGEigsSolver.h>
-
+#include <chrono>
+#include <omp.h>
 using namespace Spectra;
 
 using SpMat = Eigen::SparseMatrix<double>; // 稀疏矩阵类型
@@ -29,10 +31,11 @@ using Triplet = Eigen::Triplet<double>;
 // 18618 2W网格约束模态
 // 150165 20W网格约束模态
 // 167424 20W网格自由模态六面体
-int dim_zzy = 153630;
-std::uint32_t para = 0;
+int dim_zzy = 18618;
+std::uint32_t shift = 0;
 
 int main() {
+    omp_set_num_threads(16); // 根据需要设置线程数
     std::vector<Triplet> coefficients;            // list of non-zeros coefficients
     std::ifstream infile("K.dat");
     if (!infile) {
@@ -63,20 +66,16 @@ int main() {
     coefficients.clear();
     std::cout << "read file finished" << std::endl;
 
-    matK = matK + para * matM;
-    using OpType = SymShiftInvert<double>;
-    // SparseSymMatProd<double> op(matK);
-    // SparseCholesky
-    // using BOpType = SparseSymMatProd<double>;
-    using BOpType = SparseSymMatProd<double>; // 2
+    matK = matK + shift * matM;
+    using OpType = SparseSymMatProd<double>;
+    using BOpType = SparseCholesky<double>; // 2
+    auto start = std::chrono::high_resolution_clock::now();
 
-    OpType op(matK, matM);
+    OpType op(matK);
     BOpType Bop(matM);
-    // SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> geigs(op, Bop, 20, 40, 1.0);
-    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> geigs(op, Bop, 20, 400, 0); // 2
+    SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> geigs(op, Bop, 20, 300); // 2
     geigs.init();
-    int nconv = geigs.compute(SortRule::LargestMagn , 1000, 1e-3, SortRule::SmallestMagn);
-    // int nconv = geigs.compute(SortRule::SmallestMagn);
+    int nconv = geigs.compute(SortRule::SmallestMagn , 1000, 1e-6, SortRule::SmallestMagn);
  
     // Retrieve results
     Eigen::VectorXd evalues;
@@ -89,18 +88,18 @@ int main() {
     evalues = geigs.eigenvalues();
     evecs = geigs.eigenvectors();
     for (auto each : evalues) {
-        std::cout << sqrt(each - para) / 2.0 / M_PI << std::endl;
+        std::cout << sqrt(each - shift) / 2.0 / M_PI << std::endl;
     }
     std::cout << "Number of converged generalized eigenvalues: " << nconv << std::endl;
     std::cout << "Generalized eigenvalues found:\n" << evalues << std::endl;
-    // std::cout << "Generalized eigenvectors found:\n" << evecs.topRows(10) << std::endl;
- 
 
-    // SymGEigsSolver GEigsMode::Cholesky SparseCholesky
+    // 获取结束时间点
+    auto end = std::chrono::high_resolution_clock::now();
 
-
-
-
+    // 计算时间间隔
+    std::chrono::duration<double, std::milli> duration = end - start;
+    // 输出执行时间
+    std::cout << "Function execution time: " << duration.count() << " ms" << std::endl;
     return 0;
 
 }
