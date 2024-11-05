@@ -1,7 +1,5 @@
 /**
- * @brief SparseCholesky分解求特征值
- * 1) RegularInverse求特征值不好用
- * @brief 2W约束模态前20阶完全正确
+ * @brief SymShiftInvert求解接近某个已知特征值的特征值
  * @date 2024-10-22
  */
 #include <Eigen/Dense>
@@ -22,7 +20,6 @@
 using namespace Spectra;
 
 using SpMat = Eigen::SparseMatrix<double>; // 稀疏矩阵类型
-using EigenSolver = Eigen::SelfAdjointEigenSolver<SpMat>;
 using Eigen::MatrixXd;
 using Triplet = Eigen::Triplet<double>;
 
@@ -67,15 +64,19 @@ int main() {
     std::cout << "read file finished" << std::endl;
 
     matK = matK + shift * matM;
-    using OpType = SparseSymMatProd<double>;
-    using BOpType = SparseCholesky<double>; // 2
-    auto start = std::chrono::high_resolution_clock::now();
+    using OpType = SymShiftInvert<double>;
+    using BOpType = SparseSymMatProd<double>;
 
-    OpType op(matK);
+    auto start = std::chrono::high_resolution_clock::now();
+    OpType op(matK, matM);
     BOpType Bop(matM);
-    SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> geigs(op, Bop, 20, 300); // 2
+
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> geigs(op, Bop, 3, 400, 6.98052e+08); // 2
     geigs.init();
-    int nconv = geigs.compute(SortRule::SmallestMagn , 1000, 1e-6, SortRule::SmallestMagn);
+	// 第一个参数对应的结果：
+	// SortRule::LargestMagn：计算出大于目标值的指定个数特征值 6.98163e+08 7.82832e+08 8.4073e+08
+	// SortRule::BothEnds：计算出特征值左右两侧指定个数的特征值 4.85048e+08 6.98163e+08 7.82832e+08
+    int nconv = geigs.compute(SortRule::BothEnds , 1000, 1e-6, SortRule::SmallestMagn);
  
     // Retrieve results
     Eigen::VectorXd evalues;
