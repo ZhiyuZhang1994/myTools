@@ -39,7 +39,11 @@ if (NOT VTK_FOUND)
 endif()
 
 # 查找外部的boost库
-find_package(Boost 1.67 COMPONENTS serialization REQUIRED)
+if (POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+# find_package(Boost COMPONENTS serialization REQUIRED)
+list(APPEND CMAKE_PREFIX_PATH "C:/msys2/mingw64/bin") # 安装路径前缀
 list(APPEND CMAKE_PREFIX_PATH "D:/Program Files/Python311/Lib") # 安装路径前缀
 # list(APPEND CMAKE_PREFIX_PATH "D:/Program Files/Python311/Lib/site-packages/pybind11/share/cmake/pybind11") # 安装路径前缀
 # Find Python
@@ -47,9 +51,10 @@ find_package(Python3 COMPONENTS Development REQUIRED)
 
 # 查找 OpenMP
 find_package(OpenMP REQUIRED)
+find_package(BLAS REQUIRED)
 
 # 添加子目录
-add_subdirectory(tools)
+# add_subdirectory(tools)
 
 
 # 获取当前文件夹下cpp
@@ -64,13 +69,15 @@ add_executable(testCase ${source_list})
 
 # 指定target的编译选项
 TARGET_COMPILE_OPTIONS(testCase PRIVATE -W -Wall -Wno-unused-value -Wno-unused-parameter)
+add_compile_definitions(EIGEN_USE_BLAS)
 
 # 给target添加独有的链接库
 target_link_libraries(testCase PRIVATE
     ${VTK_LIBRARIES}
-    ${Boost_SERIALIZATION_LIBRARY_RELEASE}
+    # ${Boost_SERIALIZATION_LIBRARY_RELEASE}
     easylogging
-    tools
+    # tools
+    ${BLAS_LIBRARIES}
 )
 
 if(OpenMP_CXX_FOUND)

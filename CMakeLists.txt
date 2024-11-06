@@ -15,12 +15,14 @@ SET(CMAKE_COLOR_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 # 构建中展示更详细的输出
 SET(CMAKE_VERBOSE_MAKEFILE ON)
+SET(CMAKE_BUILD_TYPE Release)
 
 # 默认的构建类型
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE Debug)
 ENDIF()
 
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 # 指定生成文件路径
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -40,6 +42,7 @@ include_directories(
 # 全局链接路径包含
 link_directories(
     # 写第三方动态库文件存放的路径
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
 
 # 添加要编译的其他文件

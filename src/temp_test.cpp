@@ -1,5 +1,7 @@
 /**
- * @brief SymShiftInvert求解接近某个已知特征值的特征值
+ * @brief SparseCholesky分解求特征值
+ * 1) RegularInverse求特征值不好用
+ * @brief 2W约束模态前20阶完全正确
  * @date 2024-10-22
  */
 #include <Eigen/Dense>
@@ -28,11 +30,17 @@ using Triplet = Eigen::Triplet<double>;
 // 18618 2W网格约束模态
 // 150165 20W网格约束模态
 // 167424 20W网格自由模态六面体
-int dim_zzy = 18618;
+int dim_zzy = 150165;
 std::uint32_t shift = 0;
 
 int main() {
-    omp_set_num_threads(16); // 根据需要设置线程数
+    std::cout << "omp_get_thread_num " << omp_get_thread_num() << std::endl;
+    std::cout << "omp_get_num_threads " << omp_get_max_threads() << std::endl; // 获取最大可用线程数，可在程序中用于确定潜在的最大并行能力，不需要在并行区域内使用。
+    std::cout << "omp_get_num_procs " << omp_get_num_procs() << std::endl; // 返回系统的逻辑核心数，即可用的处理器数量。
+    omp_set_num_threads(omp_get_num_procs() / 2); // 根据需要设置线程数:设置为系统逻辑核心数的一半
+    std::cout << "omp_get_thread_num " << omp_get_thread_num() << std::endl;
+    std::cout << "omp_get_num_threads " << omp_get_max_threads() << std::endl;
+    std::cout << "omp_get_num_procs " << omp_get_num_procs() << std::endl; // 返回系统的逻辑核心数，即可用的处理器数量。
     std::vector<Triplet> coefficients;            // list of non-zeros coefficients
     std::ifstream infile("K.dat");
     if (!infile) {
@@ -64,19 +72,21 @@ int main() {
     std::cout << "read file finished" << std::endl;
 
     matK = matK + shift * matM;
-    using OpType = SymShiftInvert<double>;
-    using BOpType = SparseSymMatProd<double>;
+    using OpType = SparseSymMatProd<double>;
+    // SparseSymMatProd<double> op(matK);
+    // SparseCholesky
+    // using BOpType = SparseSymMatProd<double>;
+    using BOpType = SparseCholesky<double>; // 2
 
     auto start = std::chrono::high_resolution_clock::now();
-    OpType op(matK, matM);
+    OpType op(matK);
     BOpType Bop(matM);
-
-    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> geigs(op, Bop, 3, 400, 6.98052e+08); // 2
+    // SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> geigs(op, Bop, 20, 40, 1.0);
+    SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> geigs(op, Bop, 20, 200); // 2
     geigs.init();
-	// 第一个参数对应的结果：
-	// SortRule::LargestMagn：计算出大于目标值的指定个数特征值 6.98163e+08 7.82832e+08 8.4073e+08
-	// SortRule::BothEnds：计算出特征值左右两侧指定个数的特征值 4.85048e+08 6.98163e+08 7.82832e+08
-    int nconv = geigs.compute(SortRule::BothEnds , 1000, 1e-6, SortRule::SmallestMagn);
+    double tolerance = 1e-1;
+    int nconv = geigs.compute(SortRule::SmallestMagn, 1000, tolerance, SortRule::SmallestMagn);
+    // int nconv = geigs.compute(SortRule::SmallestMagn);
  
     // Retrieve results
     Eigen::VectorXd evalues;
