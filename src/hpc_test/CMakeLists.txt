@@ -39,12 +39,15 @@ macro(link_openblas target)
     endif()
 endmacro()
 
-add_executable(ex1 app.c)
+# 收集当前目录中所有源文件的名称，并将列表存储在提供的source_list变量中。
+aux_source_directory(. source_list)
+
+add_executable(hpcTest     ${source_list})
 
 if (OpenBLAS_FOUND)
     message(STATUS "OpenBLAS found, enabling support.")
     include_directories(${OpenBLAS_INCLUDE_DIRS})
-    link_openblas(ex1)
+    link_openblas(hpcTest)
 else()
     message(FATAL_ERROR "OpenBLAS not found!")
 endif()
@@ -52,20 +55,17 @@ endif()
 
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include_directories(
-    "C:/msys2/mingw64/include/petsc"
-    "C:/msys2/mingw64/include/petsc/smo"
-)
+# 使用 INTERFACE 库封装 PETSc 库
+add_library(petsc INTERFACE)
+target_include_directories(petsc INTERFACE ${PROJECT_SOURCE_DIR}/third_party/petsc/windows/include)
+target_link_directories(petsc INTERFACE ${PROJECT_SOURCE_DIR}/third_party/petsc/windows/bin)
+target_link_libraries(petsc INTERFACE petsc-dmo)
 
-link_directories(
-    "C:/msys2/mingw64/bin/"
-)
-
-target_link_libraries(ex1
+target_link_libraries(hpcTest
     PUBLIC
         ${MPI_C_LIBRARIES}  # Link MPI libraries
         OpenMP::OpenMP_C
-        "C:/msys2/mingw64/bin/libpetsc-smo.dll"
+        petsc
 )
 
 
